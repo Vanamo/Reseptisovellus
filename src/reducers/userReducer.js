@@ -2,6 +2,7 @@ import loginService from '../services/login'
 import recipeService from '../services/recipes'
 
 const initialState = {
+  id: null,
   username: null
 }
 
