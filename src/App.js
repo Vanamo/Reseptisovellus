@@ -5,6 +5,10 @@ import { initRecipes } from './reducers/recipeReducer'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import { setUser, loginUser, logoutUser } from './reducers/userReducer'
+import { Container } from 'semantic-ui-react'
+import NavigationMenu from './components/NavigationMenu'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+import RecipeList from './components/RecipeList'
 
 class App extends React.Component {
 
@@ -50,26 +54,39 @@ class App extends React.Component {
 
     if (this.props.user.username === null) {
       return (
-        <div>
-          <Notification />
+        <Container>
+          <Router>
+            <div>
+              <NavigationMenu />
+              <h1>Reseptisovellus</h1>
+              <Notification />
 
-          <LoginForm
-            handleSubmit={this.login}
-            handleChange={this.handleLoginFieldChange}
-            username={this.state.username}
-            password={this.state.password}
-          />
-        </div>
+              <Route exact path='/' render={() =>
+                <RecipeList recipes={this.props.recipes}/>
+              } />
+
+              <Route exact path='/login' render={() =>
+                <LoginForm
+                  handleSubmit={this.login}
+                  handleChange={this.handleLoginFieldChange}
+                  username={this.state.username}
+                  password={this.state.password}
+                />
+              } />
+            </div>
+          </Router>
+        </Container>
       )
     }
 
     return (
-      <div>
+      <Container>
         <h1>Reseptisovellus</h1>
         <p>{this.props.user.name} logged in
           <button onClick={this.handleLogout}>logout</button></p>
-        {this.props.recipes.map(r => r.title)}
-      </div>
+
+        <RecipeList recipes={this.props.recipes}/>
+      </Container>
     )
   }
 }

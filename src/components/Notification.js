@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { Message } from 'semantic-ui-react'
 
 class Notification extends React.Component {
   render() {
@@ -24,11 +25,19 @@ class Notification extends React.Component {
 
 
     if (notification.message) {
-      return (
-        <div style={style}>
-          {notification.message}
-        </div>
-      )
+      if (notification.style === 'success') {
+        return (
+          <Message success>
+            {notification.message}
+          </Message>
+        )
+      } else if (notification.style === 'error') {
+        return (
+          <Message error>
+            {notification.message}
+          </Message>
+        )
+      }
     } else {
       return (
         <div></div>
