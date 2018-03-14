@@ -24,6 +24,9 @@ class NavigationMenu extends React.Component {
           <NavLink exact to='/' activeStyle={linkStyle}>Reseptit</NavLink>
         </Menu.Item>
         <Menu.Item link>
+          <NavLink exact to='/newRecipe' activeStyle={linkStyle}>Lisää resepti</NavLink>
+        </Menu.Item>
+        <Menu.Item link>
           <a href='' onClick={this.props.handleLogout}>Kirjaudu ulos</a>
         </Menu.Item>
       </Menu>

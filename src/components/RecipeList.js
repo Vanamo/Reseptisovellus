@@ -6,6 +6,7 @@ class RecipeList extends React.Component {
     const recipes = this.props.recipes
     return (
       <div>
+        <h2>Reseptit</h2>
         {/* <Table striped celled>
           <Table.body>
             {recipes.map(r =>

@@ -38,10 +38,18 @@ export const loginUser = (userData) => {
         type: 'LOGIN_USER',
         user: loggedUser
       })
+      dispatch({
+        type: 'SUCCESS',
+        message: `Tervetuloa ${loggedUser.name}!`,
+        style: 'success'
+      })
+      setTimeout(() => {
+        dispatch({ type: 'HIDE_NOTIFICATION' })
+      }, 5000)
     } catch (exception) {
       dispatch({
         type: 'ERROR',
-        message: 'wrong username or password',
+        message: 'Väärä käyttäjätunnus tai salasana',
         style: 'error'
       })
       setTimeout(() => {

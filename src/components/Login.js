@@ -30,7 +30,7 @@ class Login extends React.Component {
   render() {
     return (
       <Container>
-        <h2>Kirjaudu</h2>
+        <h2>Kirjaudu reseptisovellukseen</h2>
 
         <Form onSubmit={this.handleSubmit}>
           <Form.Field>

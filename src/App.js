@@ -9,6 +9,7 @@ import { Container } from 'semantic-ui-react'
 import NavigationMenu from './components/NavigationMenu'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import RecipeList from './components/RecipeList'
+import NewRecipe from './components/NewRecipe'
 
 class App extends React.Component {
 
@@ -38,15 +39,16 @@ class App extends React.Component {
               user={this.props.user}
               handleLogout={this.handleLogout}
             />
-            <h1>Reseptisovellus</h1>
             <Notification />
 
             <Route exact path='/' render={() =>
               <RecipeList recipes={this.props.recipes} />
             } />
-
             <Route exact path='/login' render={({history}) =>
               <Login history={history} />
+            } />
+            <Route exact path='/newRecipe' render={() =>
+              <NewRecipe />
             } />
           </div>
         </Router>
