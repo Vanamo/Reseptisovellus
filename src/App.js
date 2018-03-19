@@ -10,11 +10,17 @@ import NavigationMenu from './components/NavigationMenu'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import RecipeList from './components/RecipeList'
 import NewRecipe from './components/NewRecipe'
+import { initIngredients } from './reducers/ingredientReducer'
+import { initIngredientUnits } from './reducers/ingredientUnitReducer'
+import { initTags } from './reducers/tagReducer'
 
 class App extends React.Component {
 
   componentDidMount() {
     this.props.initRecipes()
+    this.props.initIngredients()
+    this.props.initIngredientUnits()
+    this.props.initTags()
 
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
     if (loggedUserJSON) {
@@ -48,7 +54,11 @@ class App extends React.Component {
               <Login history={history} />
             } />
             <Route exact path='/newRecipe' render={() =>
-              <NewRecipe />
+              <NewRecipe
+                ingredients={this.props.ingredients}
+                units={this.props.ingredientUnits}
+                tags={this.props.tags}
+              />
             } />
           </div>
         </Router>
@@ -60,13 +70,17 @@ class App extends React.Component {
 const mapStateToProps = (state) => {
   return {
     user: state.user,
-    recipes: state.recipes
+    recipes: state.recipes,
+    ingredients: state.ingredients,
+    ingredientUnits: state.ingredientUnits,
+    tags: state.tags
   }
 }
 
 export default connect(
   mapStateToProps,
   {
-    initRecipes, setUser, loginUser, logoutUser
+    initRecipes, setUser, loginUser, logoutUser,
+    initIngredients, initIngredientUnits, initTags
   }
 )(App)

@@ -4,6 +4,8 @@ const reducer = (state = [], action) => {
   switch(action.type) {
   case 'INIT_RECIPES':
     return action.data
+  case 'NEW_RECIPE':
+    return [...state, action.data]
   }
   return state
 }

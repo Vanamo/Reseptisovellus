@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { newRecipe } from './../reducers/recipeReducer'
 import { newSuccessNotification } from './../reducers/notificationReducer'
-import { Form, Button } from 'semantic-ui-react'
+import { Form, Button, Select } from 'semantic-ui-react'
 
 class NewRecipe extends React.Component {
 
@@ -13,10 +13,9 @@ class NewRecipe extends React.Component {
     tags: []
   }
 
-  options = [
-    { key: 'j', text: 'laktoositon', value: 'laktoositon' },
-    { key: 'm', text: 'vegaaninen', value: 'vegaaninen' }
-  ]
+  populateOptions = (options) => {
+    return options.map(option => ({ key: option.id, text: option.name, value: option.id }))
+  }
 
   handleAddIngredient = () => {
     this.setState({
@@ -31,10 +30,11 @@ class NewRecipe extends React.Component {
     })
   }
 
-  handleIngredientChange = (idx) => (event) => {
+  handleIngredientChange = (idx) => (event, data) => {
+    console.log('e', event.target, data)
     const newIngredients = this.state.ingredients.map((ingredient, ind) => {
       if (ind !== idx) return ingredient
-      return { ...ingredient, [event.target.name]: event.target.value }
+      return { ...ingredient, [data.name]: data.value }
     })
     this.setState({ ingredients: newIngredients })
   }
@@ -43,9 +43,8 @@ class NewRecipe extends React.Component {
     this.setState({ [event.target.name]: event.target.value })
   }
 
-  handleTagChange = (event) => {
-    console.log('e', event.target.value)
-
+  handleTagChange = (event, data) => {
+    this.setState({ [data.name]: data.value })
   }
 
   onSubmit = async (event) => {
@@ -85,27 +84,25 @@ class NewRecipe extends React.Component {
           {this.state.ingredients.map((ingredient, idx) => (
             <Form.Group widths='equal' key={idx}>
               <Form.Input
-                label='määrä'
                 name='quantity'
+                placeholder='määrä'
                 type='number'
                 min='0'
                 step='any'
                 value={ingredient.quantity}
                 onChange={this.handleIngredientChange(idx)}
               />
-              <Form.Select
-                label='yksikkö'
+              <Select
                 name='unit'
-                options={this.options}
-                placeholder=''
+                options={this.populateOptions(this.props.units)}
+                placeholder='yksikkö'
                 value={ingredient.unit}
                 onChange={this.handleIngredientChange(idx)}
               />
-              <Form.Select
-                label='raaka-aine'
+              <Select
                 name='name'
-                options={this.options}
-                placeholder=''
+                options={this.populateOptions(this.props.ingredients)}
+                placeholder='raaka-aine'
                 value={ingredient.name}
                 onChange={this.handleIngredientChange(idx)}
               />
@@ -130,7 +127,7 @@ class NewRecipe extends React.Component {
           />
           <Form.Dropdown
             label='Tagit'
-            fluid multiple selection options={this.options}
+            fluid multiple selection options={this.populateOptions(this.props.tags)}
             placeholder=''
             name='tags'
             value={this.state.tags}
