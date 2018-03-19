@@ -102,6 +102,7 @@ class NewRecipe extends React.Component {
               <Select
                 name='name'
                 options={this.populateOptions(this.props.ingredients)}
+                search
                 placeholder='raaka-aine'
                 value={ingredient.name}
                 onChange={this.handleIngredientChange(idx)}
@@ -128,6 +129,7 @@ class NewRecipe extends React.Component {
           <Form.Dropdown
             label='Tagit'
             fluid multiple selection options={this.populateOptions(this.props.tags)}
+            search
             placeholder=''
             name='tags'
             value={this.state.tags}

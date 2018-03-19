@@ -1,5 +1,6 @@
 import React from 'react'
 import { Table } from 'semantic-ui-react'
+import { Link } from 'react-router-dom'
 
 class RecipeList extends React.Component {
   render() {
@@ -11,12 +12,12 @@ class RecipeList extends React.Component {
     return (
       <div>
         <h2>Reseptit</h2>
-        <Table striped celled>
+        <Table>
           <Table.Body>
             {recipes.map(r =>
               <Table.Row key={r.id}>
                 <Table.Cell>
-                  {r.title}
+                  <Link to={`/recipes/${r.id}`}>{r.title}</Link>
                 </Table.Cell>
               </Table.Row>
             )}

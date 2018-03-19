@@ -13,6 +13,7 @@ import NewRecipe from './components/NewRecipe'
 import { initIngredients } from './reducers/ingredientReducer'
 import { initIngredientUnits } from './reducers/ingredientUnitReducer'
 import { initTags } from './reducers/tagReducer'
+import RecipeInfo from './components/RecipeInfo'
 
 class App extends React.Component {
 
@@ -37,6 +38,11 @@ class App extends React.Component {
 
   render() {
 
+    const recipeById = (id) => {
+      const recipe = this.props.recipes.find(r => r.id === String(id))
+      return recipe
+    }
+
     return (
       <Container>
         <Router>
@@ -50,6 +56,9 @@ class App extends React.Component {
             <Route exact path='/' render={() =>
               <RecipeList recipes={this.props.recipes} />
             } />
+            <Route exact path='/recipes/:id' render={({ match }) =>
+              <RecipeInfo recipe={recipeById(match.params.id)} />}
+            />
             <Route exact path='/login' render={({history}) =>
               <Login history={history} />
             } />
