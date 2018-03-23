@@ -5,6 +5,7 @@ import userReducer from './reducers/userReducer'
 import notificationReducer from './reducers/notificationReducer'
 import ingredientReducer from './reducers/ingredientReducer'
 import ingredientUnitReducer from './reducers/ingredientUnitReducer'
+import ingredientNameReducer from './reducers/ingredientNameReducer'
 import tagReducer from './reducers/tagReducer'
 
 const reducer = combineReducers({
@@ -13,6 +14,7 @@ const reducer = combineReducers({
   notification: notificationReducer,
   ingredients: ingredientReducer,
   ingredientUnits: ingredientUnitReducer,
+  ingredientNames: ingredientNameReducer,
   tags: tagReducer
 })
 

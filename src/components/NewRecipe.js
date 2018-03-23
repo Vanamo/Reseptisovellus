@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { newRecipe } from './../reducers/recipeReducer'
+import { newIngredient } from './../reducers/ingredientReducer'
 import { newSuccessNotification } from './../reducers/notificationReducer'
 import { Form, Button, Select } from 'semantic-ui-react'
 
@@ -49,9 +50,27 @@ class NewRecipe extends React.Component {
 
   onSubmit = async (event) => {
     event.preventDefault()
+
+    const ingredients = this.state.ingredients.map(async (ing) => {
+      const ingredientObject = {
+        quantity: ing.quantity,
+        unit: ing.unit,
+        name: ing.name
+      }
+      await this.props.newIngredient(ingredientObject)
+      const newIngredient = this.props.recipeIngredients
+        .filter(i => {
+          return(
+            i.quantity === ingredientObject.quantity &&
+            i.unit === ingredientObject.unit &&
+            i.name === ingredientObject.name) })
+      console.log('n', newIngredient)
+      return newIngredient
+    })
+
     const recipeObject = {
       title: this.state.title,
-      ingredients: this.state.ingredients,
+      ingredients,
       instructions: this.state.instructions,
       tags: this.state.tags
     }
@@ -142,7 +161,13 @@ class NewRecipe extends React.Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    recipeIngredients: state.ingredients
+  }
+}
+
 export default connect(
-  null,
-  { newRecipe, newSuccessNotification }
+  mapStateToProps,
+  { newRecipe, newIngredient, newSuccessNotification }
 )(NewRecipe)

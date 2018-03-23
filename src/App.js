@@ -12,6 +12,7 @@ import RecipeList from './components/RecipeList'
 import NewRecipe from './components/NewRecipe'
 import { initIngredients } from './reducers/ingredientReducer'
 import { initIngredientUnits } from './reducers/ingredientUnitReducer'
+import { initIngredientNames } from './reducers/ingredientNameReducer'
 import { initTags } from './reducers/tagReducer'
 import RecipeInfo from './components/RecipeInfo'
 
@@ -22,6 +23,7 @@ class App extends React.Component {
     this.props.initIngredients()
     this.props.initIngredientUnits()
     this.props.initTags()
+    this.props.initIngredientNames()
 
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
     if (loggedUserJSON) {
@@ -64,7 +66,7 @@ class App extends React.Component {
             } />
             <Route exact path='/newRecipe' render={() =>
               <NewRecipe
-                ingredients={this.props.ingredients}
+                ingredients={this.props.ingredientNames}
                 units={this.props.ingredientUnits}
                 tags={this.props.tags}
               />
@@ -82,6 +84,7 @@ const mapStateToProps = (state) => {
     recipes: state.recipes,
     ingredients: state.ingredients,
     ingredientUnits: state.ingredientUnits,
+    ingredientNames: state.ingredientNames,
     tags: state.tags
   }
 }
@@ -90,6 +93,7 @@ export default connect(
   mapStateToProps,
   {
     initRecipes, setUser, loginUser, logoutUser,
-    initIngredients, initIngredientUnits, initTags
+    initIngredients, initIngredientUnits,
+    initIngredientNames, initTags
   }
 )(App)
