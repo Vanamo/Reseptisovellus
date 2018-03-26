@@ -6,7 +6,7 @@ const reducer = (state = [], action) => {
     return action.data
   case 'NEW_INGREDIENT':
     console.log('ad', action.data)
-    return action.data
+    return [...state, action.data]
   }
   return state
 }
@@ -24,12 +24,15 @@ export const initIngredients = () => {
 export const newIngredient = (ingredientObject) => {
   console.log('io', ingredientObject)
   return async (dispatch) => {
+    console.log('kutsutaanko')
     const ingredient = await ingredientService.create(ingredientObject)
     const newIngredient = await ingredientService.getOne(ingredient.id)
+    console.log('newIngredient', newIngredient)
     dispatch({
       type: 'NEW_INGREDIENT',
       data: newIngredient
     })
+    return newIngredient
   }
 }
 

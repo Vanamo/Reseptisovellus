@@ -12,7 +12,7 @@ class RecipeList extends React.Component {
     return (
       <div>
         <h2>Reseptit</h2>
-        <Table>
+        <Table basic='very'>
           <Table.Body>
             {recipes.map(r =>
               <Table.Row key={r.id}>

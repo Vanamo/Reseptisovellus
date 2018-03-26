@@ -6,6 +6,11 @@ const reducer = (state = [], action) => {
     return action.data
   case 'NEW_RECIPE':
     return [...state, action.data]
+  case 'UPDATE_RECIPE': {
+    const changedRecipe = action.data.changedRecipe
+    const id = changedRecipe.id
+    return state.map(r => r.id !== id ? r : changedRecipe)
+  }
   }
   return state
 }
@@ -27,6 +32,16 @@ export const newRecipe = (recipeObject) => {
     dispatch({
       type: 'NEW_RECIPE',
       data: newRecipe
+    })
+  }
+}
+
+export const updateRecipe = (changedRecipe) => {
+  return async (dispatch) => {
+    await recipeService.update(changedRecipe.id, changedRecipe)
+    dispatch({
+      type: 'UPDATE_RECIPE',
+      data: { changedRecipe }
     })
   }
 }

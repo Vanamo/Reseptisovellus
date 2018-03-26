@@ -5,7 +5,7 @@ const reducer = (state = [], action) => {
   case 'INIT_INGREDIENTNAMES':
     return action.data
   case 'NEW_INGREDIENTNAME':
-    return action.data
+    return [...state, action.data]
   }
   return state
 }

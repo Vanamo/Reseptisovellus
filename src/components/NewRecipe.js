@@ -32,7 +32,6 @@ class NewRecipe extends React.Component {
   }
 
   handleIngredientChange = (idx) => (event, data) => {
-    console.log('e', event.target, data)
     const newIngredients = this.state.ingredients.map((ingredient, ind) => {
       if (ind !== idx) return ingredient
       return { ...ingredient, [data.name]: data.value }
@@ -51,22 +50,15 @@ class NewRecipe extends React.Component {
   onSubmit = async (event) => {
     event.preventDefault()
 
-    const ingredients = this.state.ingredients.map(async (ing) => {
+    const ingredients = await Promise.all(this.state.ingredients.map(async (ing) => {
       const ingredientObject = {
         quantity: ing.quantity,
         unit: ing.unit,
         name: ing.name
       }
-      await this.props.newIngredient(ingredientObject)
-      const newIngredient = this.props.recipeIngredients
-        .filter(i => {
-          return(
-            i.quantity === ingredientObject.quantity &&
-            i.unit === ingredientObject.unit &&
-            i.name === ingredientObject.name) })
-      console.log('n', newIngredient)
-      return newIngredient
-    })
+      return await this.props.newIngredient(ingredientObject)
+    }))
+    console.log('i', ingredients)
 
     const recipeObject = {
       title: this.state.title,
