@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import recipeService from './services/recipes'
+import recipeNoteService from './services/recipeNotes'
 import { initRecipes } from './reducers/recipeReducer'
 import Login from './components/Login'
 import Notification from './components/Notification'
@@ -13,6 +14,7 @@ import NewRecipe from './components/NewRecipe'
 import { initIngredientUnits } from './reducers/ingredientUnitReducer'
 import { initIngredientNames } from './reducers/ingredientNameReducer'
 import { initTags } from './reducers/tagReducer'
+import { initRecipeNotes } from './reducers/recipeNoteReducer'
 import RecipeInfo from './components/RecipeInfo'
 
 class App extends React.Component {
@@ -22,12 +24,14 @@ class App extends React.Component {
     this.props.initIngredientUnits()
     this.props.initTags()
     this.props.initIngredientNames()
+    this.props.initRecipeNotes()
 
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       this.props.setUser({ user })
       recipeService.setToken(user.token)
+      recipeNoteService.setToken(user.token)
     }
   }
 
@@ -41,6 +45,12 @@ class App extends React.Component {
     const recipeById = (id) => {
       const recipe = this.props.recipes.find(r => r.id === String(id))
       return recipe
+    }
+
+    const noteById = (recipeid) => {
+      const note = this.props.recipeNotes
+        .find(rn => rn.recipeid === String (recipeid) && rn.userid === String (this.props.user.id))
+      return note
     }
 
     return (
@@ -57,7 +67,11 @@ class App extends React.Component {
               <RecipeList recipes={this.props.recipes} />
             } />
             <Route exact path='/recipes/:id' render={({ match }) =>
-              <RecipeInfo recipe={recipeById(match.params.id)} />}
+              <RecipeInfo
+                recipe={recipeById(match.params.id)}
+                note={noteById(match.params.id)}
+                user={this.props.user}
+              />}
             />
             <Route exact path='/login' render={({history}) =>
               <Login history={history} />
@@ -82,7 +96,8 @@ const mapStateToProps = (state) => {
     recipes: state.recipes,
     ingredientUnits: state.ingredientUnits,
     ingredientNames: state.ingredientNames,
-    tags: state.tags
+    tags: state.tags,
+    recipeNotes: state.recipeNotes
   }
 }
 
@@ -91,6 +106,6 @@ export default connect(
   {
     initRecipes, setUser, loginUser, logoutUser,
     initIngredientUnits,
-    initIngredientNames, initTags
+    initIngredientNames, initTags, initRecipeNotes
   }
 )(App)

@@ -1,5 +1,5 @@
 import axios from 'axios'
-const baseUrl = 'api/recipeNotes'
+const baseUrl = '/api/recipeNotes'
 
 let token = null
 
@@ -9,11 +9,12 @@ const setToken = (newToken) => {
 
 const getAll = async () => {
   const response = await axios.get(baseUrl)
+  console.log('getall', response.data)
   return response.data
 }
 
-const getOne = async (id) => {
-  const response = await axios.get(`${baseUrl}/${id}`)
+const getOne = async (recipeid, userid) => {
+  const response = await axios.get(`${baseUrl}/${recipeid}/${userid}`)
   return response.data
 }
 
@@ -26,8 +27,8 @@ const create = async (newObject) => {
   return response.data
 }
 
-const update = async (id, updatedObject) => {
-  const response = await axios.put(`${baseUrl}/${id}`, updatedObject)
+const update = async (recipeid, userid, updatedObject) => {
+  const response = await axios.put(`${baseUrl}/${recipeid}/${userid}`, updatedObject)
   return response.data
 }
 

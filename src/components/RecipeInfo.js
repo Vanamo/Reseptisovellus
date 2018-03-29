@@ -14,16 +14,15 @@ class RecipeInfo extends React.Component {
 
   render() {
     const recipe = this.props.recipe
-    console.log('recipe', recipe)
     if (!recipe) {
       return null
     }
 
     let note = null
-    if (!recipe.note && !this.state.showNoteForm) {
-      note = <a onClick={this.showNoteForm}>Lisää muistiinpano</a>
-    } else if (recipe.note) {
-      note = (<div><h3>Muistiinpano</h3><p>{recipe.note}</p></div>)
+    if (!this.props.note && !this.state.showNoteForm && this.props.user.id) {
+      note = <a onClick={this.showNoteForm} style={{ cursor: 'pointer' }}>Lisää muistiinpano</a>
+    } else if (this.props.note) {
+      note = (<div><h3>Muistiinpano</h3><p>{this.props.note.content}</p></div>)
     }
 
     let instructions = null
@@ -33,11 +32,11 @@ class RecipeInfo extends React.Component {
 
     let tags = null
     if (recipe.tags.length > 0) {
-      tags = (<div><h3>Tagit</h3>{recipe.tags.map(t => <Label key={t._id}>{t.name}</Label>)}</div>)
+      tags = (<div>{recipe.tags.map(t => <Label key={t._id}>{t.name}</Label>)}</div>)
     }
 
     return (
-      <Container>
+      <Container className='recipe'>
         <h1>{recipe.title}</h1>
         <h2>Raaka-aineet</h2>
         <Table compact basic='very' celled collapsing id='ingredients'>
@@ -57,13 +56,10 @@ class RecipeInfo extends React.Component {
             )}
           </Table.Body>
         </Table>
-        <p></p>
         {instructions}
-        <p></p>
-        {tags}
-        <p></p>
         {note}
-        {this.state.showNoteForm && <NoteForm/>}
+        {this.state.showNoteForm && <NoteForm recipe={recipe} />}
+        {tags}
       </Container>
     )
   }

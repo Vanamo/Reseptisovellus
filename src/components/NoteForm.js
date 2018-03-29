@@ -1,5 +1,7 @@
 import React from 'react'
 import { Form } from 'semantic-ui-react'
+import { connect } from 'react-redux'
+import { newRecipeNote } from './../reducers/recipeNoteReducer'
 
 class NoteForm extends React.Component {
 
@@ -11,14 +13,28 @@ class NoteForm extends React.Component {
     this.setState({ [event.target.name]: event.target.value })
   }
 
-  onSubmit = () => {
-    
+  onSubmit = async (event) => {
+    event.preventDefault()
+
+    const recipe = this.props.recipe
+
+    const noteObject = {
+      content: this.state.note,
+      recipeid: recipe.id
+    }
+
+    await this.props.newRecipeNote(noteObject)
+
+    this.setState({
+      note: ''
+    })
+
   }
 
   render() {
     return(
       <Form onSubmit={this.onSubmit}>
-        <Form.Input
+        <Form.TextArea
           label='Uusi muistiinpano'
           name='note'
           value={this.state.note}
@@ -30,4 +46,7 @@ class NoteForm extends React.Component {
   }
 }
 
-export default NoteForm
+export default connect(
+  null,
+  { newRecipeNote }
+)(NoteForm)

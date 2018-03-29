@@ -1,5 +1,6 @@
 import loginService from '../services/login'
 import recipeService from '../services/recipes'
+import recipeNoteService from '../services/recipeNotes'
 
 const initialState = {
   id: null,
@@ -34,6 +35,7 @@ export const loginUser = (userData) => {
       const loggedUser = await loginService.login({ username, password })
       window.localStorage.setItem('loggedUser', JSON.stringify(loggedUser))
       recipeService.setToken(loggedUser.token)
+      recipeNoteService.setToken(loggedUser.token)
       dispatch({
         type: 'LOGIN_USER',
         user: loggedUser
