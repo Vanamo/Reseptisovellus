@@ -90,13 +90,19 @@ class App extends React.Component {
   }
 }
 
+const sortAlphabetically = (a, b) => {
+  if (a.name < b.name) return -1
+  if (a.name > b.name) return 1
+  return 0
+}
+
 const mapStateToProps = (state) => {
   return {
     user: state.user,
     recipes: state.recipes,
-    ingredientUnits: state.ingredientUnits,
-    ingredientNames: state.ingredientNames,
-    tags: state.tags,
+    ingredientUnits: state.ingredientUnits.sort(sortAlphabetically),
+    ingredientNames: state.ingredientNames.sort(sortAlphabetically),
+    tags: state.tags.sort(sortAlphabetically),
     recipeNotes: state.recipeNotes
   }
 }

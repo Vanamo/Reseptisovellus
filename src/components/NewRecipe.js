@@ -58,7 +58,6 @@ class NewRecipe extends React.Component {
       }
       return await this.props.newIngredient(ingredientObject)
     }))
-    console.log('i', ingredients)
 
     const recipeObject = {
       title: this.state.title,
@@ -94,7 +93,7 @@ class NewRecipe extends React.Component {
           <p></p>
           {this.state.ingredients.map((ingredient, idx) => (
             <Form.Group widths='equal' key={idx}>
-              <Form.Input
+              <Form.Input fluid
                 name='quantity'
                 placeholder='määrä'
                 type='number'
@@ -103,14 +102,14 @@ class NewRecipe extends React.Component {
                 value={ingredient.quantity}
                 onChange={this.handleIngredientChange(idx)}
               />
-              <Select
+              <Form.Select fluid
                 name='unit'
                 options={this.populateOptions(this.props.units)}
                 placeholder='yksikkö'
                 value={ingredient.unit}
                 onChange={this.handleIngredientChange(idx)}
               />
-              <Select
+              <Form.Select fluid
                 name='name'
                 options={this.populateOptions(this.props.ingredients)}
                 search
