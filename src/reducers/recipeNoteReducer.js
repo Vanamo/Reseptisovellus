@@ -7,7 +7,7 @@ const reducer = (state = [], action) => {
   case 'NEW_RECIPENOTE':
     return [...state, action.data]
   case 'UPDATE_RECIPENOTE': {
-    const changedRecipeNote = action.data.changedRecipeNote
+    const changedRecipeNote = action.data
     const id = changedRecipeNote.id
     return state.map(n => n.id !== id ? n : changedRecipeNote)
   }
@@ -29,10 +29,21 @@ export const newRecipeNote = (noteObject) => {
 export const initRecipeNotes = () => {
   return async (dispatch) => {
     const recipeNotes = await recipeNoteService.getAll()
-    console.log('init', recipeNotes)
     dispatch({
       type: 'INIT_RECIPENOTES',
       data: recipeNotes
+    })
+  }
+}
+
+export const updateRecipeNote = (changedNote) => {
+  return async (dispatch) => {
+    const recipeid = changedNote.recipeid
+    const userid = changedNote.userid
+    await recipeNoteService.update(recipeid, userid, changedNote)
+    dispatch({
+      type: 'UPDATE_RECIPENOTE',
+      data: { changedNote }
     })
   }
 }

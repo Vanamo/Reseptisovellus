@@ -9,7 +9,6 @@ const setToken = (newToken) => {
 
 const getAll = async () => {
   const response = await axios.get(baseUrl)
-  console.log('getall', response.data)
   return response.data
 }
 
@@ -28,6 +27,7 @@ const create = async (newObject) => {
 }
 
 const update = async (recipeid, userid, updatedObject) => {
+  console.log('upd', recipeid, userid, updatedObject)
   const response = await axios.put(`${baseUrl}/${recipeid}/${userid}`, updatedObject)
   return response.data
 }

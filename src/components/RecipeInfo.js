@@ -1,15 +1,21 @@
 import React from 'react'
-import { Container, Table, Label } from 'semantic-ui-react'
+import { Container, Table, Label, Button } from 'semantic-ui-react'
 import NoteForm from './NoteForm'
+import ChangeNoteForm from './ChangeNoteForm'
 
 class RecipeInfo extends React.Component {
 
   state = {
-    showNoteForm: false
+    showNoteForm: false,
+    showChangeNoteForm: false
   }
 
   showNoteForm = () => {
     this.setState({ showNoteForm: true })
+  }
+
+  showChangeNoteForm = () => {
+    this.setState({ showChangeNoteForm: true })
   }
 
   render() {
@@ -20,9 +26,10 @@ class RecipeInfo extends React.Component {
 
     let note = null
     if (!this.props.note && !this.state.showNoteForm && this.props.user.id) {
-      note = <a onClick={this.showNoteForm} style={{ cursor: 'pointer' }}>Lisää muistiinpano</a>
-    } else if (this.props.note) {
-      note = (<div><h3>Muistiinpano</h3><p>{this.props.note.content}</p></div>)
+      note = <Button onClick={this.showNoteForm}>Lisää muistiinpano</Button>
+    } else if (this.props.note && !this.state.showChangeNoteForm) {
+      note = (<div><h3>Muistiinpano</h3><p>{this.props.note.content}</p>
+        <Button onClick={this.showChangeNoteForm}>Muokkaa muistiinpanoa</Button></div>)
     }
 
     let instructions = null
@@ -59,6 +66,7 @@ class RecipeInfo extends React.Component {
         {instructions}
         {note}
         {this.state.showNoteForm && <NoteForm recipe={recipe} />}
+        {this.state.showChangeNoteForm && <ChangeNoteForm note={this.props.note} />}
         {tags}
       </Container>
     )
