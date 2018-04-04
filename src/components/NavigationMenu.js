@@ -11,9 +11,11 @@ class NavigationMenu extends React.Component {
           <Menu.Item link>
             <NavLink exact to='/' activeStyle={linkStyle}>Reseptit</NavLink>
           </Menu.Item>
-          <Menu.Item link>
-            <NavLink exact to='/login' activeStyle={linkStyle}>Kirjaudu</NavLink>
-          </Menu.Item>
+          <Menu.Menu position='right'>
+            <Menu.Item link>
+              <NavLink exact to='/login' activeStyle={linkStyle}>Kirjaudu</NavLink>
+            </Menu.Item>
+          </Menu.Menu>
         </Menu>
       )
     }
@@ -26,9 +28,12 @@ class NavigationMenu extends React.Component {
         <Menu.Item link>
           <NavLink exact to='/newRecipe' activeStyle={linkStyle}>Lisää resepti</NavLink>
         </Menu.Item>
-        <Menu.Item link>
-          <a href='' onClick={this.props.handleLogout}>Kirjaudu ulos</a>
-        </Menu.Item>
+        <Menu.Menu position='right'>
+          <Menu.Item>{user.username}</Menu.Item>
+          <Menu.Item link>
+            <a href='' onClick={this.props.handleLogout}>Kirjaudu ulos</a>
+          </Menu.Item>
+        </Menu.Menu>
       </Menu>
     )
   }
