@@ -32,7 +32,9 @@ class RecipeInfo extends React.Component {
 
     let note = null
     if (!this.props.note && !this.state.showNoteForm && this.props.user.id) {
-      note = <Button size='mini' onClick={this.showNoteForm}>Lisää muistiinpano</Button>
+      note = (<Grid.Column>
+          <Button size='small' onClick={this.showNoteForm}>Lisää muistiinpano</Button>
+        </Grid.Column>)
     } else if (this.props.note && !this.state.showChangeNoteForm) {
       note = (
         <Grid.Column>
@@ -67,8 +69,11 @@ class RecipeInfo extends React.Component {
     }
 
     if (this.state.showEditRecipe) {
-      return
-      <EditRecipe recipe={recipe} />
+      return <EditRecipe 
+        history={this.props.history} 
+        recipe={recipe}
+        note={this.props.note}
+        user={this.props.user}/>
     }
 
     return (

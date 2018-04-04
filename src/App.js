@@ -49,7 +49,7 @@ class App extends React.Component {
 
     const noteById = (recipeid) => {
       const note = this.props.recipeNotes
-        .find(rn => rn.recipeid === String (recipeid) && rn.userid === String (this.props.user.id))
+        .find(rn => rn.recipeid === String(recipeid) && rn.userid === String(this.props.user.id))
       return note
     }
 
@@ -66,14 +66,15 @@ class App extends React.Component {
             <Route exact path='/' render={() =>
               <RecipeList recipes={this.props.recipes} />
             } />
-            <Route exact path='/recipes/:id' render={({ match }) =>
+            <Route exact path='/recipes/:id' render={({ match, history }) =>
               <RecipeInfo
+                history={history}
                 recipe={recipeById(match.params.id)}
                 note={noteById(match.params.id)}
                 user={this.props.user}
               />}
             />
-            <Route exact path='/login' render={({history}) =>
+            <Route exact path='/login' render={({ history }) =>
               <Login history={history} />
             } />
             <Route exact path='/newRecipe' render={() =>

@@ -152,13 +152,7 @@ class NewRecipe extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    recipeIngredients: state.ingredients
-  }
-}
-
 export default connect(
-  mapStateToProps,
+  null,
   { newRecipe, newIngredient, newSuccessNotification }
 )(NewRecipe)

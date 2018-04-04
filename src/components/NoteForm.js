@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form } from 'semantic-ui-react'
+import { Form, Grid } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import { newRecipeNote } from './../reducers/recipeNoteReducer'
 
@@ -32,16 +32,18 @@ class NoteForm extends React.Component {
   }
 
   render() {
-    return(
-      <Form onSubmit={this.onSubmit}>
-        <Form.TextArea
-          label='Uusi muistiinpano'
-          name='note'
-          value={this.state.note}
-          onChange={this.handleChange}
-        />
-        <Form.Button positive>Tallenna muistiinpano</Form.Button>
-      </Form>
+    return (
+      <Grid.Column>
+        <Form onSubmit={this.onSubmit}>
+          <Form.TextArea
+            label='Uusi muistiinpano'
+            name='note'
+            value={this.state.note}
+            onChange={this.handleChange}
+          />
+          <Form.Button positive>Tallenna muistiinpano</Form.Button>
+        </Form>
+      </Grid.Column>
     )
   }
 }
