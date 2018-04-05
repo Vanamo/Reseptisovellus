@@ -1,19 +1,18 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { newRecipe } from './../reducers/recipeReducer'
+import { updateRecipe } from './../reducers/recipeReducer'
 import { newIngredient } from './../reducers/ingredientReducer'
 import { newSuccessNotification } from './../reducers/notificationReducer'
-import { Form, Button, Select } from 'semantic-ui-react'
-import { Link } from 'react-router-dom'
-import RecipeInfo from './RecipeInfo'
+import { Form, Button } from 'semantic-ui-react'
 
 class EditRecipe extends React.Component {
 
   state = {
     title: this.props.recipe.title,
-    ingredients: this.props.recipe.ingredients,
+    ingredients: this.props.recipe.ingredients
+      .map(i => ({ quantity: i.quantity, name: i.name._id, unit: i.unit._id })),
     instructions: this.props.recipe.instructions,
-    tags: this.props.recipe.tags
+    tags: this.props.recipe.tags.map(t => t._id)
   }
 
 
@@ -47,7 +46,6 @@ class EditRecipe extends React.Component {
   }
 
   handleTagChange = (event, data) => {
-    console.log('tags', this.state.tags, data.value)
     this.setState({ [data.name]: data.value })
   }
 
@@ -63,16 +61,21 @@ class EditRecipe extends React.Component {
       return await this.props.newIngredient(ingredientObject)
     }))
 
-    const recipeObject = {
+    const recipe = this.props.recipe
+
+    const changedRecipe = {
+      id: recipe.id,
       title: this.state.title,
       ingredients,
       instructions: this.state.instructions,
-      tags: this.state.tags
+      likes: recipe.likes,
+      tags: this.state.tags,
+      user: recipe.user
     }
 
-    await this.props.newRecipe(recipeObject)
+    await this.props.updateRecipe(changedRecipe)
 
-    this.props.newSuccessNotification('Uusi resepti luotu', 5)
+    this.props.newSuccessNotification('Resepti on päivitetty', 5)
 
     this.setState({
       title: '',
@@ -89,22 +92,6 @@ class EditRecipe extends React.Component {
   }
 
   render() {
-
-    const findUnit = (unit) => {
-        if (!unit.name) return unit
-        return this.props.units.find(u => u.name === unit.name).id
-    }
-
-    const findIngredient = (ingredient) => {
-        if (!ingredient.name) return ingredient
-        return this.props.ingredients.find(i => i.name === ingredient.name).id
-    }
-
-    const findTags = (tag) => {
-      if (!tag.name) return tag
-      return (this.props.tags.find(t => t.name === tag.name).id)
-    }
-
     return (
       <div>
         <h2>Muokkaa reseptiä</h2>
@@ -133,7 +120,7 @@ class EditRecipe extends React.Component {
                 name='unit'
                 options={this.populateOptions(this.props.units)}
                 placeholder='yksikkö'
-                value={findUnit(ingredient.unit)}
+                value={ingredient.unit}
                 onChange={this.handleIngredientChange(idx)}
               />
               <Form.Select fluid
@@ -141,7 +128,7 @@ class EditRecipe extends React.Component {
                 options={this.populateOptions(this.props.ingredients)}
                 search
                 placeholder='raaka-aine'
-                value={findIngredient(ingredient.name)}
+                value={ingredient.name}
                 onChange={this.handleIngredientChange(idx)}
               />
               <Button
@@ -165,12 +152,12 @@ class EditRecipe extends React.Component {
           />
           <Form.Dropdown
             label='Tagit'
-            fluid multiple selection 
+            fluid multiple selection
             options={this.populateOptions(this.props.tags)}
             search
             placeholder=''
             name='tags'
-            value={this.state.tags.map(t => findTags(t))}
+            value={this.state.tags}
             onChange={this.handleTagChange}
           />
         </Form>
@@ -187,20 +174,20 @@ class EditRecipe extends React.Component {
 
 
 const sortAlphabetically = (a, b) => {
-    if (a.name < b.name) return -1
-    if (a.name > b.name) return 1
-    return 0
+  if (a.name < b.name) return -1
+  if (a.name > b.name) return 1
+  return 0
+}
+
+const mapStateToProps = (state) => {
+  return {
+    units: state.ingredientUnits.sort(sortAlphabetically),
+    ingredients: state.ingredientNames.sort(sortAlphabetically),
+    tags: state.tags.sort(sortAlphabetically)
   }
-  
-  const mapStateToProps = (state) => {
-    return {
-      units: state.ingredientUnits.sort(sortAlphabetically),
-      ingredients: state.ingredientNames.sort(sortAlphabetically),
-      tags: state.tags.sort(sortAlphabetically)
-    }
-  }
+}
 
 export default connect(
   mapStateToProps,
-  { newRecipe, newIngredient, newSuccessNotification }
+  { updateRecipe, newIngredient, newSuccessNotification }
 )(EditRecipe)

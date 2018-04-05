@@ -33,8 +33,8 @@ class RecipeInfo extends React.Component {
     let note = null
     if (!this.props.note && !this.state.showNoteForm && this.props.user.id) {
       note = (<Grid.Column>
-          <Button size='small' onClick={this.showNoteForm}>Lisää muistiinpano</Button>
-        </Grid.Column>)
+        <Button size='small' onClick={this.showNoteForm}>Lisää muistiinpano</Button>
+      </Grid.Column>)
     } else if (this.props.note && !this.state.showChangeNoteForm) {
       note = (
         <Grid.Column>
@@ -59,6 +59,7 @@ class RecipeInfo extends React.Component {
     }
 
     let tags = null
+    console.log('tags', recipe.tags)
     if (recipe.tags.length > 0) {
       tags = (<div>{recipe.tags.map(t => <Label color='brown' key={t._id}>{t.name}</Label>)}</div>)
     }
@@ -69,11 +70,11 @@ class RecipeInfo extends React.Component {
     }
 
     if (this.state.showEditRecipe) {
-      return <EditRecipe 
-        history={this.props.history} 
+      return <EditRecipe
+        history={this.props.history}
         recipe={recipe}
         note={this.props.note}
-        user={this.props.user}/>
+        user={this.props.user} />
     }
 
     return (
