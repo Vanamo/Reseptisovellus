@@ -2,8 +2,9 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { newRecipe } from './../reducers/recipeReducer'
 import { newIngredient } from './../reducers/ingredientReducer'
-import { newSuccessNotification } from './../reducers/notificationReducer'
+import { newSuccessNotification, newErrorNotification } from './../reducers/notificationReducer'
 import { Form, Button, Select } from 'semantic-ui-react'
+import { Redirect } from 'react-router-dom'
 
 class NewRecipe extends React.Component {
 
@@ -11,7 +12,8 @@ class NewRecipe extends React.Component {
     title: '',
     ingredients: [{ quantity: '', unit: '', name: '' }],
     instructions: '',
-    tags: []
+    tags: [],
+    newRecipe: {}
   }
 
   populateOptions = (options) => {
@@ -50,35 +52,47 @@ class NewRecipe extends React.Component {
   onSubmit = async (event) => {
     event.preventDefault()
 
-    const ingredients = await Promise.all(this.state.ingredients.map(async (ing) => {
-      const ingredientObject = {
-        quantity: ing.quantity,
-        unit: ing.unit,
-        name: ing.name
+    console.log('ings', this.state.ingredients)
+    const oldTitle = this.props.recipes.find(r => r.title === this.state.title)
+    if (!oldTitle) { 
+
+      const ingredients = await Promise.all(this.state.ingredients.map(async (ing) => {
+        const ingredientObject = {
+          quantity: ing.quantity,
+          unit: ing.unit,
+          name: ing.name
+        }
+        return await this.props.newIngredient(ingredientObject)
+      }))
+
+      const recipeObject = {
+        title: this.state.title,
+        ingredients,
+        instructions: this.state.instructions,
+        tags: this.state.tags
       }
-      return await this.props.newIngredient(ingredientObject)
-    }))
 
-    const recipeObject = {
-      title: this.state.title,
-      ingredients,
-      instructions: this.state.instructions,
-      tags: this.state.tags
+      const newRecipe = await this.props.newRecipe(recipeObject)
+
+      this.props.newSuccessNotification('Uusi resepti luotu', 5)
+
+      this.setState({
+        title: '',
+        ingredients: [{ quantity: '', unit: '', name: '' }],
+        instructions: '',
+        tags: [],
+        newRecipe
+      })
+
+    } else {
+      this.props.newErrorNotification('Reseptin nimi on jo käytössä. Valitse toinen nimi.', 5)
     }
-
-    await this.props.newRecipe(recipeObject)
-
-    this.props.newSuccessNotification('Uusi resepti luotu', 5)
-
-    this.setState({
-      title: '',
-      ingredients: [{ quantity: '', unit: '', name: '' }],
-      instructions: '',
-      tags: []
-    })
   }
 
   render() {
+    if (this.state.newRecipe.id) {
+      return <Redirect to={`/recipes/${this.state.newRecipe.id}`}/>
+    }
     return (
       <div>
         <h2>Lisää uusi resepti</h2>
@@ -152,7 +166,13 @@ class NewRecipe extends React.Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    recipes: state.recipes
+  }
+}
+
 export default connect(
-  null,
-  { newRecipe, newIngredient, newSuccessNotification }
+  mapStateToProps,
+  { newRecipe, newIngredient, newSuccessNotification, newErrorNotification }
 )(NewRecipe)

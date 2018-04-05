@@ -85,10 +85,7 @@ class EditRecipe extends React.Component {
     })
   }
 
-  onCancel = (e) => {
-    e.preventDefault()
-    console.log('h', this.props.history)
-    this.props.history.push(`/recipes/${this.props.recipe.id}`)
+  onCancel = () => {
   }
 
   render() {

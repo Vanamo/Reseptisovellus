@@ -1,0 +1,30 @@
+import axios from 'axios'
+const baseUrl = '/api/likes'
+
+let token = null
+
+const setToken = (newToken) => {
+  token = `bearer ${newToken}`
+}
+
+const getAll = async () => {
+  const response = await axios.get(baseUrl)
+  return response.data
+}
+
+const getOne = async (recipeid, userid) => {
+  const response = await axios.get(`${baseUrl}/${recipeid}/${userid}`)
+  return response.data
+}
+
+const create = async (newObject) => {
+  const config = {
+    headers: { 'Authorization': token }
+  }
+
+  console.log('no', newObject, config)
+  const response = await axios.post(baseUrl, newObject, config)
+  return response.data
+}
+
+export default { getAll, getOne, create, setToken }

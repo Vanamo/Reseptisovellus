@@ -33,6 +33,7 @@ export const newRecipe = (recipeObject) => {
       type: 'NEW_RECIPE',
       data: newRecipe
     })
+    return newRecipe
   }
 }
 

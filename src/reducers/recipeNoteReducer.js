@@ -23,6 +23,7 @@ export const newRecipeNote = (noteObject) => {
       type: 'NEW_RECIPENOTE',
       data: newNote
     })
+    return newNote
   }
 }
 

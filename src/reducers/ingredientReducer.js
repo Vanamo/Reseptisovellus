@@ -24,7 +24,6 @@ export const initIngredients = () => {
 export const newIngredient = (ingredientObject) => {
   console.log('io', ingredientObject)
   return async (dispatch) => {
-    console.log('kutsutaanko')
     const ingredient = await ingredientService.create(ingredientObject)
     const newIngredient = await ingredientService.getOne(ingredient.id)
     console.log('newIngredient', newIngredient)

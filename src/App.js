@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import recipeService from './services/recipes'
 import recipeNoteService from './services/recipeNotes'
+import likeService from './services/likes'
 import { initRecipes } from './reducers/recipeReducer'
 import Login from './components/Login'
 import Notification from './components/Notification'
@@ -15,6 +16,7 @@ import { initIngredientUnits } from './reducers/ingredientUnitReducer'
 import { initIngredientNames } from './reducers/ingredientNameReducer'
 import { initTags } from './reducers/tagReducer'
 import { initRecipeNotes } from './reducers/recipeNoteReducer'
+import { initLikes } from './reducers/likeReducer'
 import RecipeInfo from './components/RecipeInfo'
 
 class App extends React.Component {
@@ -25,6 +27,7 @@ class App extends React.Component {
     this.props.initTags()
     this.props.initIngredientNames()
     this.props.initRecipeNotes()
+    this.props.initLikes()
 
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
     if (loggedUserJSON) {
@@ -32,6 +35,7 @@ class App extends React.Component {
       this.props.setUser({ user })
       recipeService.setToken(user.token)
       recipeNoteService.setToken(user.token)
+      likeService.setToken(user.token)
     }
   }
 
@@ -53,6 +57,11 @@ class App extends React.Component {
       return note
     }
 
+    const likesById = (recipeid) => {
+      console.log('l', this.props.likes)
+      return this.props.likes.filter(id => String(id) === String(recipeid))
+    }
+
     return (
       <Container>
         <Router>
@@ -66,11 +75,11 @@ class App extends React.Component {
             <Route exact path='/' render={() =>
               <RecipeList recipes={this.props.recipes} />
             } />
-            <Route exact path='/recipes/:id' render={({ match, history }) =>
+            <Route exact path='/recipes/:id' render={({ match }) =>
               <RecipeInfo
-                history={history}
                 recipe={recipeById(match.params.id)}
                 note={noteById(match.params.id)}
+                likes={likesById(match.params.id)}
                 user={this.props.user}
               />}
             />
@@ -104,7 +113,8 @@ const mapStateToProps = (state) => {
     ingredientUnits: state.ingredientUnits.sort(sortAlphabetically),
     ingredientNames: state.ingredientNames.sort(sortAlphabetically),
     tags: state.tags.sort(sortAlphabetically),
-    recipeNotes: state.recipeNotes
+    recipeNotes: state.recipeNotes,
+    likes: state.likes
   }
 }
 
@@ -113,6 +123,7 @@ export default connect(
   {
     initRecipes, setUser, loginUser, logoutUser,
     initIngredientUnits,
-    initIngredientNames, initTags, initRecipeNotes
+    initIngredientNames, initTags, initRecipeNotes,
+    initLikes
   }
 )(App)

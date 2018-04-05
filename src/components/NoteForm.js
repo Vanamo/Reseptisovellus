@@ -2,11 +2,13 @@ import React from 'react'
 import { Form, Grid } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import { newRecipeNote } from './../reducers/recipeNoteReducer'
+import { Redirect } from 'react-router-dom'
 
 class NoteForm extends React.Component {
 
   state = ({
-    note: ''
+    note: '',
+    newRecipeNote: []
   })
 
   handleChange = (event) => {
@@ -23,15 +25,21 @@ class NoteForm extends React.Component {
       recipeid: recipe.id
     }
 
-    await this.props.newRecipeNote(noteObject)
+    const newRecipeNote = await this.props.newRecipeNote(noteObject)
 
     this.setState({
-      note: ''
+      note: '',
+      newRecipeNote
     })
-
   }
 
   render() {
+    console.log('rn', this.state.newRecipeNote)
+    if (this.state.newRecipeNote.length > 0) {
+      console.log('this', this)
+      window.location.reload()
+      return null
+    }
     return (
       <Grid.Column>
         <Form onSubmit={this.onSubmit}>
