@@ -26,4 +26,12 @@ const create = async (newObject) => {
   return response.data
 }
 
-export default { getAll, getOne, create, setToken }
+const deleteLike = async (recipeid, userid) => {
+  const config = {
+    headers: { 'Authorization': token }
+  }
+
+  await axios.delete(`${baseUrl}/${recipeid}/${userid}`, config)
+}
+
+export default { getAll, getOne, create, setToken, deleteLike }

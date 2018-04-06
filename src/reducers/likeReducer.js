@@ -6,6 +6,8 @@ const reducer = (state = [], action) => {
     return action.data
   case 'NEW_LIKE':
     return [...state, action.data]
+  case 'DELETE_LIKE':
+    return state.filter(l => l.id !== action.data.id)
   }
   return state
 }
@@ -27,6 +29,17 @@ export const initLikes = () => {
     dispatch({
       type: 'INIT_LIKES',
       data: likes
+    })
+  }
+}
+
+export const deleteLike = (like) => {
+  return async (dispatch) => {
+    const id = like._id
+    await likeService.deleteLike(like.recipeid, like.userid)
+    dispatch({
+      type: 'DELETE_LIKE',
+      data: { id }
     })
   }
 }

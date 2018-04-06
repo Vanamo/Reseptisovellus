@@ -34,9 +34,7 @@ class NoteForm extends React.Component {
   }
 
   render() {
-    console.log('rn', this.state.newRecipeNote)
     if (this.state.newRecipeNote.length > 0) {
-      console.log('this', this)
       window.location.reload()
       return null
     }

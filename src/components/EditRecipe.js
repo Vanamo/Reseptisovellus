@@ -99,9 +99,8 @@ class EditRecipe extends React.Component {
             value={this.state.title}
             onChange={this.handleFieldChange}
           />
-          <strong>Raaka-aineet</strong>
+          <strong>Ainekset</strong>
           <p></p>
-          {console.log('i', this.state.ingredients)}
           {this.state.ingredients.map((ingredient, idx) => (
             <Form.Group widths='equal' key={idx}>
               <Form.Input fluid

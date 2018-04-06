@@ -1,2 +1,3 @@
 #ingredients tr td { border: 0 !important; }
 .recipe div { margin-top: 2em; margin-bottom: 2em; }
+.note div { margin-top: 2em; margin-bottom: 0 }

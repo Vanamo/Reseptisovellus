@@ -1,10 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Button, Grid, Icon, Label, Table } from 'semantic-ui-react'
+import { Button, Grid, Icon, Label, Segment, Table } from 'semantic-ui-react'
 import NoteForm from './NoteForm'
 import ChangeNoteForm from './ChangeNoteForm'
 import EditRecipe from './EditRecipe'
-import { newLike } from './../reducers/likeReducer'
+import { newLike, deleteLike } from './../reducers/likeReducer'
+import { newSuccessNotification } from './../reducers/notificationReducer'
 
 class RecipeInfo extends React.Component {
 
@@ -32,6 +33,16 @@ class RecipeInfo extends React.Component {
     }
 
     await this.props.newLike(likeObject)
+
+    window.location.reload()
+  }
+
+  handleDislike = async () => {
+    const like = this.props.likes.find(l => l.userid === this.props.user.id)
+    console.log('like', like)
+    await this.props.deleteLike(like)
+
+    window.location.reload()
   }
 
   render() {
@@ -46,19 +57,19 @@ class RecipeInfo extends React.Component {
     let noteToShow = null
     if (user.id &&
       !note &&
-      !this.state.showNoteForm &&
-      (user.id === recipe.user._id ||
-        recipe.likedUsers.find(l => l === user.id))) {
-      noteToShow = (<Grid.Column>
+      !this.state.showNoteForm) {
+      noteToShow = (
         <Button size='small' onClick={this.showNoteForm}>Lisää muistiinpano</Button>
-      </Grid.Column>)
+      )
     } else if (note && !this.state.showChangeNoteForm) {
       noteToShow = (
-        <Grid.Column width={4}>
-          <h3>Muistiinpano</h3>
-          <p>{note.content}</p>
-          <Button size='mini' onClick={this.showChangeNoteForm}>Muokkaa</Button>
-        </Grid.Column>
+        <div className='note'>
+          <Segment compact>
+            <h3>Muistiinpano</h3>
+            {note.content}
+            <div><Button size='tiny' onClick={this.showChangeNoteForm}>Muokkaa</Button></div>
+          </Segment>
+        </div>
       )
     }
 
@@ -78,15 +89,14 @@ class RecipeInfo extends React.Component {
     }
 
     let like = null
-    if (user.id) {
-      console.log('liked', this.props.user)
+    if (user.id && user.id !== recipe.user._id) {
+      console.log('likes', this.props.likes)
       if (!recipe.likedUsers.find(l => l === user.id)) {
         like =
           <div>
             <Button as='div' labelPosition='right'>
-              <Button onClick={this.handleLike} color='red'>
+              <Button onClick={this.handleLike}>
                 <Icon name='heart' />
-                Tykkää
               </Button>
               <Label as='a' basic color='red' pointing='left'>{this.props.likes.length}</Label>
             </Button>
@@ -95,9 +105,8 @@ class RecipeInfo extends React.Component {
         like =
           <div>
             <Button as='div' labelPosition='right'>
-              <Button disabled color='red'>
+              <Button onClick={this.handleDislike} color='red'>
                 <Icon name='heart' />
-                Tykätty
               </Button>
               <Label as='a' basic color='red' pointing='left'>{this.props.likes.length}</Label>
             </Button>
@@ -113,10 +122,10 @@ class RecipeInfo extends React.Component {
     }
 
     return (
-      <Grid container className='recipe' columns='equal' padded>
+      <Grid className='recipe'>
         <Grid.Column width={6}>
           <h1>{recipe.title}</h1>
-          <h2>Raaka-aineet</h2>
+          <h2>Ainekset</h2>
           <Table compact basic='very' celled collapsing id='ingredients'>
             <Table.Body>
               {recipe.ingredients.map(i =>
@@ -138,10 +147,10 @@ class RecipeInfo extends React.Component {
           {tags}
           {edit}
           {like}
+          {noteToShow}
+          {this.state.showNoteForm && <NoteForm recipe={recipe} />}
+          {this.state.showChangeNoteForm && <ChangeNoteForm note={note} />}
         </Grid.Column>
-        {noteToShow}
-        {this.state.showNoteForm && <NoteForm recipe={recipe} />}
-        {this.state.showChangeNoteForm && <ChangeNoteForm note={note} />}
       </Grid>
     )
   }
@@ -149,5 +158,5 @@ class RecipeInfo extends React.Component {
 
 export default connect(
   null,
-  { newLike }
+  { newLike, deleteLike, newSuccessNotification }
 )(RecipeInfo)
