@@ -30,7 +30,6 @@ export const setUser = (userData) => {
 export const loginUser = (userData) => {
   const username = userData.username
   const password = userData.password
-  console.log('user', username, password)
   return async (dispatch) => {
     try {
       const loggedUser = await loginService.login({ username, password })

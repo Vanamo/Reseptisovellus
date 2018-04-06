@@ -58,8 +58,8 @@ class App extends React.Component {
     }
 
     const likesById = (recipeid) => {
-      console.log('l', this.props.likes)
-      return this.props.likes.filter(id => String(id) === String(recipeid))
+      const likes = this.props.likes.filter(id => String(id) === String(recipeid))
+      return likes
     }
 
     return (

@@ -36,24 +36,27 @@ class RecipeInfo extends React.Component {
 
   render() {
     const recipe = this.props.recipe
+    const user = this.props.user
+    const note = this.props.note
+
     if (!recipe) {
       return null
     }
 
-    let note = null
-    if (this.props.user.id &&
-      !this.props.note &&
+    let noteToShow = null
+    if (user.id &&
+      !note &&
       !this.state.showNoteForm &&
-      (this.props.user.id === recipe.user._id ||
-        this.props.user.likedRecipes.find(l => l === recipe.id))) {
-      note = (<Grid.Column>
+      (user.id === recipe.user._id ||
+        recipe.likedUsers.find(l => l === user.id))) {
+      noteToShow = (<Grid.Column>
         <Button size='small' onClick={this.showNoteForm}>Lisää muistiinpano</Button>
       </Grid.Column>)
-    } else if (this.props.note && !this.state.showChangeNoteForm) {
-      note = (
+    } else if (note && !this.state.showChangeNoteForm) {
+      noteToShow = (
         <Grid.Column width={4}>
           <h3>Muistiinpano</h3>
-          <p>{this.props.note.content}</p>
+          <p>{note.content}</p>
           <Button size='mini' onClick={this.showChangeNoteForm}>Muokkaa</Button>
         </Grid.Column>
       )
@@ -65,21 +68,19 @@ class RecipeInfo extends React.Component {
     }
 
     let tags = null
-    console.log('tags', recipe.tags)
     if (recipe.tags.length > 0) {
       tags = (<div>{recipe.tags.map(t => <Label key={t._id}>{t.name}</Label>)}</div>)
     }
 
     let edit = null
-    console.log('user', this.props.user)
-    if (this.props.user.id === recipe.user._id) {
+    if (user.id === recipe.user._id) {
       edit = (<Button onClick={this.showEditRecipe} color='black'>Muokkaa reseptiä</Button>)
     }
 
     let like = null
-    console.log('likes', this.props.likes)
-    if (this.props.user.id) {
-      if (!this.props.user.likedRecipes.find(l => l === recipe.id)) {
+    if (user.id) {
+      console.log('liked', this.props.user)
+      if (!recipe.likedUsers.find(l => l === user.id)) {
         like =
           <div>
             <Button as='div' labelPosition='right'>
@@ -107,8 +108,8 @@ class RecipeInfo extends React.Component {
     if (this.state.showEditRecipe) {
       return <EditRecipe
         recipe={recipe}
-        note={this.props.note}
-        user={this.props.user} />
+        note={note}
+        user={user} />
     }
 
     return (
@@ -138,9 +139,9 @@ class RecipeInfo extends React.Component {
           {edit}
           {like}
         </Grid.Column>
-        {note}
+        {noteToShow}
         {this.state.showNoteForm && <NoteForm recipe={recipe} />}
-        {this.state.showChangeNoteForm && <ChangeNoteForm note={this.props.note} />}
+        {this.state.showChangeNoteForm && <ChangeNoteForm note={note} />}
       </Grid>
     )
   }
