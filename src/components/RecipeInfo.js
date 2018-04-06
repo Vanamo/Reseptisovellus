@@ -2,25 +2,27 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Button, Grid, Icon, Label, Segment, Table } from 'semantic-ui-react'
 import NoteForm from './NoteForm'
-import ChangeNoteForm from './ChangeNoteForm'
+import EditNote from './EditNote'
 import EditRecipe from './EditRecipe'
 import { newLike, deleteLike } from './../reducers/likeReducer'
+import { deleteRecipeNote } from './../reducers/recipeNoteReducer'
 import { newSuccessNotification } from './../reducers/notificationReducer'
+import LikeButton from './LikeButton'
 
 class RecipeInfo extends React.Component {
 
   state = {
     showNoteForm: false,
-    showChangeNoteForm: false,
-    showEditRecipe: false,
+    showEditNoteForm: false,
+    showEditRecipe: false
   }
 
   showNoteForm = () => {
     this.setState({ showNoteForm: true })
   }
 
-  showChangeNoteForm = () => {
-    this.setState({ showChangeNoteForm: true })
+  showEditNoteForm = () => {
+    this.setState({ showEditNoteForm: true })
   }
 
   showEditRecipe = () => {
@@ -45,6 +47,13 @@ class RecipeInfo extends React.Component {
     window.location.reload()
   }
 
+  deleteNote = () => {
+    if (window.confirm('Haluatko varmasti poistaa muistiinpanon?')) {
+      this.props.deleteRecipeNote(this.props.note)
+      window.location.reload()
+    }
+  }
+
   render() {
     const recipe = this.props.recipe
     const user = this.props.user
@@ -59,15 +68,18 @@ class RecipeInfo extends React.Component {
       !note &&
       !this.state.showNoteForm) {
       noteToShow = (
-        <Button size='small' onClick={this.showNoteForm}>Lisää muistiinpano</Button>
+        <Button onClick={this.showNoteForm}>Lisää muistiinpano</Button>
       )
-    } else if (note && !this.state.showChangeNoteForm) {
+    } else if (note && !this.state.showEditNoteForm) {
       noteToShow = (
         <div className='note'>
           <Segment compact>
             <h3>Muistiinpano</h3>
             {note.content}
-            <div><Button size='tiny' onClick={this.showChangeNoteForm}>Muokkaa</Button></div>
+            <div>
+              <Button size='tiny' onClick={this.showEditNoteForm}>Muokkaa</Button>
+              <Button size='tiny' negative onClick={this.deleteNote}>Poista</Button>
+            </div>
           </Segment>
         </div>
       )
@@ -92,25 +104,17 @@ class RecipeInfo extends React.Component {
     if (user.id && user.id !== recipe.user._id) {
       console.log('likes', this.props.likes)
       if (!recipe.likedUsers.find(l => l === user.id)) {
-        like =
-          <div>
-            <Button as='div' labelPosition='right'>
-              <Button onClick={this.handleLike}>
-                <Icon name='heart' />
-              </Button>
-              <Label as='a' basic color='red' pointing='left'>{this.props.likes.length}</Label>
-            </Button>
-          </div>
+        like = <LikeButton
+          onClick={this.handleLike}
+          color='grey'
+          likes={this.props.likes.length}
+        />
       } else {
-        like =
-          <div>
-            <Button as='div' labelPosition='right'>
-              <Button onClick={this.handleDislike} color='red'>
-                <Icon name='heart' />
-              </Button>
-              <Label as='a' basic color='red' pointing='left'>{this.props.likes.length}</Label>
-            </Button>
-          </div>
+        like = <LikeButton
+          onClick={this.handleDislike}
+          color='red'
+          likes={this.props.likes.length}
+        />
       }
     }
 
@@ -125,6 +129,7 @@ class RecipeInfo extends React.Component {
       <Grid className='recipe'>
         <Grid.Column width={6}>
           <h1>{recipe.title}</h1>
+          {like}
           <h2>Ainekset</h2>
           <Table compact basic='very' celled collapsing id='ingredients'>
             <Table.Body>
@@ -146,10 +151,9 @@ class RecipeInfo extends React.Component {
           {instructions}
           {tags}
           {edit}
-          {like}
           {noteToShow}
           {this.state.showNoteForm && <NoteForm recipe={recipe} />}
-          {this.state.showChangeNoteForm && <ChangeNoteForm note={note} />}
+          {this.state.showEditNoteForm && <EditNote note={note} />}
         </Grid.Column>
       </Grid>
     )
@@ -158,5 +162,5 @@ class RecipeInfo extends React.Component {
 
 export default connect(
   null,
-  { newLike, deleteLike, newSuccessNotification }
+  { newLike, deleteLike, deleteRecipeNote, newSuccessNotification }
 )(RecipeInfo)

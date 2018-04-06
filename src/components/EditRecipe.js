@@ -12,7 +12,8 @@ class EditRecipe extends React.Component {
     ingredients: this.props.recipe.ingredients
       .map(i => ({ quantity: i.quantity, name: i.name._id, unit: i.unit._id })),
     instructions: this.props.recipe.instructions,
-    tags: this.props.recipe.tags.map(t => t._id)
+    tags: this.props.recipe.tags.map(t => t._id),
+    cancel: false
   }
 
 
@@ -81,14 +82,20 @@ class EditRecipe extends React.Component {
       title: '',
       ingredients: [{ quantity: '', unit: '', name: '' }],
       instructions: '',
-      tags: []
+      tags: [],
+      cancel: true
     })
   }
 
   onCancel = () => {
+    this.setState({ cancel: true })
   }
 
   render() {
+    if (this.state.cancel) {
+      window.location.reload()
+      return null
+    }
     return (
       <div>
         <h2>Muokkaa reseptiä</h2>
@@ -158,11 +165,8 @@ class EditRecipe extends React.Component {
           />
         </Form>
         <p></p>
-        <Button.Group>
-          <Button positive onClick={this.onSubmit}>Tallenna muutokset</Button>
-          <Button.Or text='tai' />
-          <Button negative onClick={this.onCancel}>Peruuta</Button>
-        </Button.Group>
+        <Button positive onClick={this.onSubmit}>Tallenna muutokset</Button>
+        <Button negative onClick={this.onCancel}>Peruuta</Button>
       </div>
     )
   }

@@ -32,4 +32,12 @@ const update = async (recipeid, userid, updatedObject) => {
   return response.data
 }
 
-export default { getAll, getOne, create, setToken, update }
+const deleteRecipeNote = async (recipeid, userid) => {
+  const config = {
+    headers: { 'Authorization': token }
+  }
+
+  await axios.delete(`${baseUrl}/${recipeid}/${userid}`, config)
+}
+
+export default { getAll, getOne, create, setToken, update, deleteRecipeNote }

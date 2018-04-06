@@ -11,6 +11,8 @@ const reducer = (state = [], action) => {
     const id = changedRecipeNote.id
     return state.map(n => n.id !== id ? n : changedRecipeNote)
   }
+  case 'DELETE_NOTE':
+    return state.filter(n => n.id !== action.data.id)
   }
   return state
 }
@@ -45,6 +47,17 @@ export const updateRecipeNote = (changedNote) => {
     dispatch({
       type: 'UPDATE_RECIPENOTE',
       data: { changedNote }
+    })
+  }
+}
+
+export const deleteRecipeNote = (note) => {
+  return async (dispatch) => {
+    const id = note._id
+    await recipeNoteService.deleteRecipeNote(note.recipeid, note.userid)
+    dispatch({
+      type: 'DELETE_NOTE',
+      data: { id }
     })
   }
 }

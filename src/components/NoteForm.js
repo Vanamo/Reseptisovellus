@@ -1,14 +1,14 @@
 import React from 'react'
-import { Form, Grid } from 'semantic-ui-react'
+import { Button, Form } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import { newRecipeNote } from './../reducers/recipeNoteReducer'
-import { Redirect } from 'react-router-dom'
 
 class NoteForm extends React.Component {
 
   state = ({
     note: '',
-    newRecipeNote: []
+    newRecipeNote: [],
+    cancel: false
   })
 
   handleChange = (event) => {
@@ -33,13 +33,17 @@ class NoteForm extends React.Component {
     })
   }
 
+  onCancel = () => {
+    this.setState({ cancel: true })
+  }
+
   render() {
-    if (this.state.newRecipeNote.length > 0) {
+    if (this.state.newRecipeNote.length > 0 || this.state.cancel) {
       window.location.reload()
       return null
     }
     return (
-      <Grid.Column>
+      <div>
         <Form onSubmit={this.onSubmit}>
           <Form.TextArea
             label='Uusi muistiinpano'
@@ -47,9 +51,11 @@ class NoteForm extends React.Component {
             value={this.state.note}
             onChange={this.handleChange}
           />
-          <Form.Button positive>Tallenna muistiinpano</Form.Button>
         </Form>
-      </Grid.Column>
+        <p></p>
+        <Button positive onClick={this.onSubmit}>Tallenna muistiinpano</Button>
+        <Button negative onClick={this.onCancel}>Peruuta</Button>
+      </div>
     )
   }
 }

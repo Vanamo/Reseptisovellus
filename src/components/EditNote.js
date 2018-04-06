@@ -1,12 +1,13 @@
 import React from 'react'
-import { Form, Grid } from 'semantic-ui-react'
+import { Button, Form } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import { updateRecipeNote } from './../reducers/recipeNoteReducer'
 
-class ChangeNoteForm extends React.Component {
+class EditNote extends React.Component {
 
   state = ({
-    note: `${this.props.note.content}`
+    note: `${this.props.note.content}`,
+    cancel: false
   })
 
   handleChange = (event) => {
@@ -21,18 +22,26 @@ class ChangeNoteForm extends React.Component {
       ...note,
       content: this.state.note,
     }
-    console.log('cn', changedNote)
     await this.props.updateRecipeNote(changedNote)
 
     this.setState({
       note: ''
     })
 
+    window.location.reload()
+  }
+
+  onCancel = () => {
+    this.setState({ cancel: true })
   }
 
   render() {
+    if (this.state.cancel) {
+      window.location.reload()
+      return null
+    }
     return (
-      <Grid.Column>
+      <div>
         <Form onSubmit={this.onSubmit}>
           <Form.TextArea
             onChange={this.handleChange}
@@ -40,9 +49,11 @@ class ChangeNoteForm extends React.Component {
             name='note'
             value={this.state.note}
           />
-          <Form.Button positive>Tallenna muistiinpano</Form.Button>
         </Form>
-      </Grid.Column>
+        <p></p>
+        <Button positive onClick={this.onSubmit}>Tallenna muutokset</Button>
+        <Button negative onClick={this.onCancel}>Peruuta</Button>
+      </div>
     )
   }
 }
@@ -50,4 +61,4 @@ class ChangeNoteForm extends React.Component {
 export default connect(
   null,
   { updateRecipeNote }
-)(ChangeNoteForm)
+)(EditNote)
