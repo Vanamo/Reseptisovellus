@@ -20,7 +20,7 @@ export const initIngredientNames = () => {
   }
 }
 
-export const newIngredient = (ingredientNameObject) => {
+export const newIngredientName = (ingredientNameObject) => {
   return async (dispatch) => {
     const ingredientName = await ingredientNameService.create(ingredientNameObject)
     const newIngredientName = await ingredientNameService.getOne(ingredientName.id)

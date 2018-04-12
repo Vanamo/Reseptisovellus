@@ -3,6 +3,9 @@ import { connect } from 'react-redux'
 import { newRecipe } from './../reducers/recipeReducer'
 import { newIngredient } from './../reducers/ingredientReducer'
 import { newSuccessNotification, newErrorNotification } from './../reducers/notificationReducer'
+import { newIngredientUnit } from './../reducers/ingredientUnitReducer'
+import { newIngredientName } from './../reducers/ingredientNameReducer'
+import { newTag } from './../reducers/tagReducer'
 import { Form, Button, Select } from 'semantic-ui-react'
 import { Redirect } from 'react-router-dom'
 
@@ -49,12 +52,39 @@ class NewRecipe extends React.Component {
     this.setState({ [data.name]: data.value })
   }
 
+  handleUnitAddition = (e, { value }) => {
+    const newUnit = {
+      name: value
+    }
+    if (window.confirm(`Haluatko varmasti lisätä uuden yksikön '${value}'?`)) {
+      this.props.newIngredientUnit(newUnit)
+    }
+  }
+
+  handleIngredientNameAddition = (e, { value }) => {
+    const newName = {
+      name: value
+    }
+    if (window.confirm(`Haluatko varmasti lisätä uuden raaka-aineen '${value}'?`)) {
+      this.props.newIngredientName(newName)
+    }
+  }
+
+  handleTagAddition = (e, { value }) => {
+    const newTag = {
+      name: value
+    }
+    if (window.confirm(`Haluatko varmasti lisätä uuden tagin '${value}'?`)) {
+      this.props.newTag(newTag)
+    }
+  }
+
   onSubmit = async (event) => {
     event.preventDefault()
 
     console.log('ings', this.state.ingredients)
     const oldTitle = this.props.recipes.find(r => r.title === this.state.title)
-    if (!oldTitle) { 
+    if (!oldTitle) {
 
       const ingredients = await Promise.all(this.state.ingredients.map(async (ing) => {
         const ingredientObject = {
@@ -91,7 +121,7 @@ class NewRecipe extends React.Component {
 
   render() {
     if (this.state.newRecipe.id) {
-      return <Redirect to={`/recipes/${this.state.newRecipe.id}`}/>
+      return <Redirect to={`/recipes/${this.state.newRecipe.id}`} />
     }
     return (
       <div>
@@ -118,18 +148,23 @@ class NewRecipe extends React.Component {
               />
               <Form.Select fluid
                 name='unit'
+                search
                 options={this.populateOptions(this.props.units)}
                 placeholder='yksikkö'
+                allowAdditions
                 value={ingredient.unit}
                 onChange={this.handleIngredientChange(idx)}
+                onAddItem={this.handleUnitAddition}
               />
               <Form.Select fluid
                 name='name'
                 options={this.populateOptions(this.props.ingredients)}
                 search
+                allowAdditions
                 placeholder='raaka-aine'
                 value={ingredient.name}
                 onChange={this.handleIngredientChange(idx)}
+                onAddItem={this.handleIngredientNameAddition}
               />
               <Button
                 negative
@@ -152,12 +187,17 @@ class NewRecipe extends React.Component {
           />
           <Form.Dropdown
             label='Tagit'
-            fluid multiple selection options={this.populateOptions(this.props.tags)}
+            fluid
+            multiple
+            selection
+            options={this.populateOptions(this.props.tags)}
             search
+            allowAdditions
             placeholder=''
             name='tags'
             value={this.state.tags}
             onChange={this.handleTagChange}
+            onAddItem={this.handleTagAddition}
           />
           <Form.Button positive>Luo resepti</Form.Button>
         </Form>
@@ -174,5 +214,9 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  { newRecipe, newIngredient, newSuccessNotification, newErrorNotification }
+  {
+    newRecipe, newIngredient, newSuccessNotification,
+    newErrorNotification, newIngredientUnit, 
+    newIngredientName, newTag
+  }
 )(NewRecipe)

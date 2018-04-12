@@ -5,7 +5,7 @@ const reducer = (state = [], action) => {
   case 'INIT_TAGS':
     return action.data
   case 'NEW_TAG':
-    return action.data
+    return [...state, action.data]
   }
   return state
 }

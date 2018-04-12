@@ -10,6 +10,13 @@ class Login extends React.Component {
     password: ''
   }
 
+  componentWillReceiveProps = (nextProps) => {
+    console.log('np', nextProps)
+    if (nextProps.user) {
+      this.props.history.push('/')
+    }
+  }
+
   handleSubmit = (event) => {
     event.preventDefault()
     const user = ({
@@ -19,7 +26,6 @@ class Login extends React.Component {
 
     this.props.loginUser(user)
     this.setState({ username: '', password: '' })
-    this.props.history.push('/')
 
   }
 
@@ -58,7 +64,15 @@ class Login extends React.Component {
   }
 }
 
+
+const mapStateToProps = (state) => {
+  console.log('state', state)
+  return {
+    user: state.user,
+  }
+}
+
 export default connect(
-  null,
+  mapStateToProps,
   { loginUser }
 )(Login)
