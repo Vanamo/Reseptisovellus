@@ -9,7 +9,7 @@ import Notification from './components/Notification'
 import { setUser, loginUser, logoutUser } from './reducers/userReducer'
 import { Container } from 'semantic-ui-react'
 import NavigationMenu from './components/NavigationMenu'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
 import RecipeList from './components/RecipeList'
 import NewRecipe from './components/NewRecipe'
 import { initIngredientUnits } from './reducers/ingredientUnitReducer'
@@ -75,7 +75,11 @@ class App extends React.Component {
             <Notification />
 
             <Route exact path='/' render={() =>
-              <RecipeList recipes={this.props.recipes} />
+              <RecipeList
+                recipes={this.props.recipes}
+                likes={this.props.likes}
+                user={this.props.user}
+              />
             } />
             <Route exact path='/recipes/:id' render={({ match }) =>
               <RecipeInfo
