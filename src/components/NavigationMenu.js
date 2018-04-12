@@ -1,9 +1,23 @@
 import React from 'react'
-import { Menu, Button } from 'semantic-ui-react'
-import { NavLink } from 'react-router-dom'
+import { Menu } from 'semantic-ui-react'
+import { NavLink, Redirect } from 'react-router-dom'
 
 class NavigationMenu extends React.Component {
+
+  state = {
+    logout: false
+  }
+
+  doLogout = () => {
+    this.props.handleLogout()
+    this.setState({ logout: true })
+  }
+
   render() {
+    if (this.state.logout) {
+      return <Redirect to='/' />
+    }
+
     const user = this.props.user
     if (user.id === null) {
       return (
@@ -31,7 +45,7 @@ class NavigationMenu extends React.Component {
         <Menu.Menu position='right'>
           <Menu.Item>{user.username}</Menu.Item>
           <Menu.Item link>
-            <a href='' onClick={this.props.handleLogout}>Kirjaudu ulos</a>
+            <a href='' onClick={this.doLogout}>Kirjaudu ulos</a>
           </Menu.Item>
         </Menu.Menu>
       </Menu>

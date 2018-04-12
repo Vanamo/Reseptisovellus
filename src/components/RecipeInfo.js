@@ -102,17 +102,22 @@ class RecipeInfo extends React.Component {
 
     let like = null
     if (user.id && user.id !== recipe.user._id) {
-      console.log('likes', this.props.likes)
-      if (!recipe.likedUsers.find(l => l === user.id)) {
+      let userLikes = false
+      if (recipe.likedUsers) {
+        if (recipe.likedUsers.find(l => l === user.id)) {
+          userLikes = true
+        }
+      }
+      if (userLikes) {
         like = <LikeButton
-          onClick={this.handleLike}
-          color='grey'
+          onClick={this.handleDislike}
+          color='red'
           likes={this.props.likes.length}
         />
       } else {
         like = <LikeButton
-          onClick={this.handleDislike}
-          color='red'
+          onClick={this.handleLike}
+          color='grey'
           likes={this.props.likes.length}
         />
       }

@@ -71,7 +71,8 @@ class EditRecipe extends React.Component {
       instructions: this.state.instructions,
       likes: recipe.likes,
       tags: this.state.tags,
-      user: recipe.user
+      user: recipe.user,
+      likedUsers: recipe.likedUsers
     }
 
     await this.props.updateRecipe(changedRecipe)

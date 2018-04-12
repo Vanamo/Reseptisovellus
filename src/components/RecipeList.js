@@ -3,19 +3,36 @@ import { Icon, Table } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 
 class RecipeList extends React.Component {
+
+  likes = (recipe) => {
+    if (recipe.likedUsers) {
+      return recipe.likedUsers.length
+    } else {
+      return 0
+    }
+  }
+
   render() {
-    const recipes = this.props.recipes
+
+    const sortByLikes = (a, b) => {
+      const likea = this.likes(a)
+      const likeb = this.likes(b)
+      if (likea < likeb) return 1
+      if (likea > likeb) return -1
+      return 0
+    }
+
+    const recipes = this.props.recipes.sort(sortByLikes)
     if (!recipes) {
       return null
     }
 
-    const findLikes = (id) => {
-      return this.props.likes.filter(l => l.recipeid === id).length
-    }
-
     const user = this.props.user
     const heartStyle = (recipe) => {
-      const like = this.props.likes.find(l => l.recipeid === recipe.id && l.userid === user.id)
+      let like = null
+      if (recipe.likedUsers) {
+        like = recipe.likedUsers.find(l => l === user.id)
+      }
       if (like || user.id === recipe.user._id) {
         return <Icon name='heart' color='red' />
       } else {
@@ -30,11 +47,11 @@ class RecipeList extends React.Component {
           <Table.Body>
             {recipes.map(r =>
               <Table.Row key={r.id}>
-                <Table.Cell width={6}>
-                  <Link to={`/recipes/${r.id}`}>{r.title}</Link>
+                <Table.Cell collapsing>
+                  {heartStyle(r)}{this.likes(r)}
                 </Table.Cell>
                 <Table.Cell>
-                  {heartStyle(r)}{findLikes(r.id)}
+                  <Link to={`/recipes/${r.id}`}>{r.title}</Link>
                 </Table.Cell>
               </Table.Row>
             )}
