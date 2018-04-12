@@ -18,6 +18,7 @@ import { initTags } from './reducers/tagReducer'
 import { initRecipeNotes } from './reducers/recipeNoteReducer'
 import { initLikes } from './reducers/likeReducer'
 import RecipeInfo from './components/RecipeInfo'
+import Favorites from './components/Favorites'
 
 class App extends React.Component {
 
@@ -98,6 +99,9 @@ class App extends React.Component {
                 units={this.props.ingredientUnits}
                 tags={this.props.tags}
               />
+            } />
+            <Route exact path='/favorites' render={() =>
+              <Favorites user={this.props.user} />
             } />
           </div>
         </Router>

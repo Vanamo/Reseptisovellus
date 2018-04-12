@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Button, Grid, Icon, Label, Segment, Table } from 'semantic-ui-react'
+import { Button, Grid, Label, Segment, Table } from 'semantic-ui-react'
 import NoteForm from './NoteForm'
 import EditNote from './EditNote'
 import EditRecipe from './EditRecipe'
@@ -130,6 +130,13 @@ class RecipeInfo extends React.Component {
         user={user} />
     }
 
+    const quantity = (q) => {
+      if (q === 0) {
+        return null
+      }
+      return q
+    }
+
     return (
       <Grid className='recipe'>
         <Grid.Column width={6}>
@@ -141,7 +148,7 @@ class RecipeInfo extends React.Component {
               {recipe.ingredients.map(i =>
                 <Table.Row key={i.id}>
                   <Table.Cell>
-                    {i.quantity}
+                    {quantity(i.quantity)}
                   </Table.Cell>
                   <Table.Cell>
                     {i.unit.name}

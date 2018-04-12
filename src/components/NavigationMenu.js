@@ -42,6 +42,9 @@ class NavigationMenu extends React.Component {
         <Menu.Item link>
           <NavLink exact to='/newRecipe' activeStyle={linkStyle}>Lisää resepti</NavLink>
         </Menu.Item>
+        <Menu.Item link>
+          <NavLink exact to='/favorites' activeStyle={linkStyle}>Suosikit</NavLink>
+        </Menu.Item>
         <Menu.Menu position='right'>
           <Menu.Item>{user.username}</Menu.Item>
           <Menu.Item link>
