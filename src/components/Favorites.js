@@ -11,29 +11,48 @@ class Favorites extends React.Component {
     own: false
   }
 
-  handleLikedClick = (event) => {
-    this.setState({
-      all: false,
-      liked: false,
-      own: false
-    })
-    console.log('c', event.target.value)
+  handleClick = (event) => {
+    const value = event.target.value
+
+    this.setState(() =>
+      ['all','liked', 'own'].reduce((obj, avain) =>
+        ({ ...obj, [avain]: avain === value })
+        , {})
+    )
   }
 
   render() {
-
+    if (!this.props.user.id) {
+      return null
+    }
+    if (!this.props.allUsers.length) {
+      return null
+    }
     const user = this.props.allUsers.find(au => au.id === this.props.user.id)
+    console.log('user', user)
+
+    let buttonLiked = <Button onClick={this.handleClick} value={'liked'}>Tykätyt</Button>
+    let buttonAll = <Button onClick={this.handleClick} value={'all'}>Kaikki</Button>
+    let buttonOwn = <Button onClick={this.handleClick} value={'own'}>Omat</Button>
+    if (this.state.liked) {
+      buttonLiked = <Button disabled>Tykätyt</Button>
+    }
+    if (this.state.all) {
+      buttonAll = <Button disabled>Kaikki</Button>
+    }
+    if (this.state.own) {
+      buttonOwn = <Button disabled>Omat</Button>
+    }
 
     const buttons = (
       <Button.Group>
-        <Button onClick={this.handleLikedClick} value={this.state.liked}>Tykätyt</Button>
-        <Button onClick={this.handleAllClick} value={this.state.all}>Kaikki</Button>
-        <Button onClick={this.handleOwnClick} value={this.state.own}>Omat</Button>
+        {buttonLiked}
+        {buttonAll}
+        {buttonOwn}
       </Button.Group>
     )
 
     let recipeIds = null
-    console.log('u', user)
     if (this.state.all) {
       recipeIds = user.recipes.concat(user.likedRecipes)
     } else if (this.state.liked) {
@@ -42,7 +61,7 @@ class Favorites extends React.Component {
       recipeIds = user.recipes
     }
 
-    const recipes = this.props.recipes.filter(r => recipeIds.indexOf(r.id !== -1))
+    const recipes = this.props.recipes.filter(r => recipeIds.indexOf(r.id) !== -1)
 
     if (!recipes) {
       return null

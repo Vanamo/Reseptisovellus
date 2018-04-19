@@ -6,8 +6,9 @@ import { newSuccessNotification, newErrorNotification } from './../reducers/noti
 import { newIngredientUnit } from './../reducers/ingredientUnitReducer'
 import { newIngredientName } from './../reducers/ingredientNameReducer'
 import { newTag } from './../reducers/tagReducer'
-import { Form, Button, Select } from 'semantic-ui-react'
+import { Form, Button } from 'semantic-ui-react'
 import { Redirect } from 'react-router-dom'
+import { initUsers } from './../reducers/allUsersReducer'
 
 class NewRecipe extends React.Component {
 
@@ -103,6 +104,7 @@ class NewRecipe extends React.Component {
       }
 
       const newRecipe = await this.props.newRecipe(recipeObject)
+      this.props.initUsers()
 
       this.props.newSuccessNotification('Uusi resepti luotu', 5)
 
@@ -217,6 +219,6 @@ export default connect(
   {
     newRecipe, newIngredient, newSuccessNotification,
     newErrorNotification, newIngredientUnit, 
-    newIngredientName, newTag
+    newIngredientName, newTag, initUsers
   }
 )(NewRecipe)
