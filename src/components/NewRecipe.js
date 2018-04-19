@@ -218,7 +218,7 @@ export default connect(
   mapStateToProps,
   {
     newRecipe, newIngredient, newSuccessNotification,
-    newErrorNotification, newIngredientUnit, 
+    newErrorNotification, newIngredientUnit,
     newIngredientName, newTag, initUsers
   }
 )(NewRecipe)
