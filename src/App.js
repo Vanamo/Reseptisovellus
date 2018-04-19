@@ -17,6 +17,7 @@ import { initIngredientNames } from './reducers/ingredientNameReducer'
 import { initTags } from './reducers/tagReducer'
 import { initRecipeNotes } from './reducers/recipeNoteReducer'
 import { initLikes } from './reducers/likeReducer'
+import { initUsers } from './reducers/allUsersReducer'
 import RecipeInfo from './components/RecipeInfo'
 import Favorites from './components/Favorites'
 
@@ -29,6 +30,7 @@ class App extends React.Component {
     this.props.initIngredientNames()
     this.props.initRecipeNotes()
     this.props.initLikes()
+    this.props.initUsers()
 
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
     if (loggedUserJSON) {
@@ -101,7 +103,9 @@ class App extends React.Component {
               />
             } />
             <Route exact path='/favorites' render={() =>
-              <Favorites user={this.props.user} />
+              <Favorites
+                user={this.props.user}
+              />
             } />
           </div>
         </Router>
@@ -119,6 +123,7 @@ const sortAlphabetically = (a, b) => {
 const mapStateToProps = (state) => {
   return {
     user: state.user,
+    allUsers: state.allUsers,
     recipes: state.recipes,
     ingredientUnits: state.ingredientUnits.sort(sortAlphabetically),
     ingredientNames: state.ingredientNames.sort(sortAlphabetically),
@@ -134,6 +139,6 @@ export default connect(
     initRecipes, setUser, loginUser, logoutUser,
     initIngredientUnits,
     initIngredientNames, initTags, initRecipeNotes,
-    initLikes
+    initLikes, initUsers
   }
 )(App)
