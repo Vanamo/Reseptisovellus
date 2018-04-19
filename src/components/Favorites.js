@@ -11,7 +11,12 @@ class Favorites extends React.Component {
     own: false
   }
 
-  handleClick = (event) => {
+  handleLikedClick = (event) => {
+    this.setState({
+      all: false,
+      liked: false,
+      own: false
+    })
     console.log('c', event.target.value)
   }
 
@@ -21,9 +26,9 @@ class Favorites extends React.Component {
 
     const buttons = (
       <Button.Group>
-        <Button onClick={this.handleClick} value='liked'>Tykätyt</Button>
-        <Button onClick={this.handleClick} value='all'>Kaikki</Button>
-        <Button onClick={this.handleClick} value='own'>Omat</Button>
+        <Button onClick={this.handleLikedClick} value={this.state.liked}>Tykätyt</Button>
+        <Button onClick={this.handleAllClick} value={this.state.all}>Kaikki</Button>
+        <Button onClick={this.handleOwnClick} value={this.state.own}>Omat</Button>
       </Button.Group>
     )
 
