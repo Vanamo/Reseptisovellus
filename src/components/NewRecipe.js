@@ -14,10 +14,10 @@ class NewRecipe extends React.Component {
 
   state = {
     title: '',
-    ingredients: [{ quantity: '', unit: '', name: '' }],
+    ingredients: [],
     instructions: '',
     tags: [],
-    newRecipe: {}
+    newRecipe: {},
   }
 
   populateOptions = (options) => {
@@ -27,7 +27,14 @@ class NewRecipe extends React.Component {
   handleAddIngredient = () => {
     this.setState({
       ingredients: this.state.ingredients
-        .concat([{ quantity: '', unit: '', name: '' }])
+        .concat([{ quantity: '', unit: '', name: '', subheading: '', type: 'ingredient' }])
+    })
+  }
+
+  handleAddSubheading = () => {
+    this.setState({
+      ingredients: this.state.ingredients
+        .concat([{ quantity: '', unit: '', name: '', subheading: '', type: 'title' }])
     })
   }
 
@@ -41,6 +48,14 @@ class NewRecipe extends React.Component {
     const newIngredients = this.state.ingredients.map((ingredient, ind) => {
       if (ind !== idx) return ingredient
       return { ...ingredient, [data.name]: data.value }
+    })
+    this.setState({ ingredients: newIngredients })
+  }
+
+  handleIngredientSubheadingChange = (idx) => (event) => {
+    const newIngredients = this.state.ingredients.map((ingredient, ind) => {
+      if (ind !== idx) return ingredient
+      return { ...ingredient, subheading: event.target.value }
     })
     this.setState({ ingredients: newIngredients })
   }
@@ -91,7 +106,9 @@ class NewRecipe extends React.Component {
         const ingredientObject = {
           quantity: ing.quantity,
           unit: ing.unit,
-          name: ing.name
+          name: ing.name,
+          subheading: ing.subheading,
+          type: ing.type
         }
         return await this.props.newIngredient(ingredientObject)
       }))
@@ -110,7 +127,7 @@ class NewRecipe extends React.Component {
 
       this.setState({
         title: '',
-        ingredients: [{ quantity: '', unit: '', name: '' }],
+        ingredients: [],
         instructions: '',
         tags: [],
         newRecipe
@@ -137,48 +154,74 @@ class NewRecipe extends React.Component {
           />
           <strong>Raaka-aineet</strong>
           <p></p>
-          {this.state.ingredients.map((ingredient, idx) => (
-            <Form.Group widths='equal' key={idx}>
-              <Form.Input fluid
-                name='quantity'
-                placeholder='määrä'
-                type='number'
-                min='0'
-                step='any'
-                value={ingredient.quantity}
-                onChange={this.handleIngredientChange(idx)}
-              />
-              <Form.Select fluid
-                name='unit'
-                search
-                options={this.populateOptions(this.props.units)}
-                placeholder='yksikkö'
-                allowAdditions
-                value={ingredient.unit}
-                onChange={this.handleIngredientChange(idx)}
-                onAddItem={this.handleUnitAddition}
-              />
-              <Form.Select fluid
-                name='name'
-                options={this.populateOptions(this.props.ingredients)}
-                search
-                allowAdditions
-                placeholder='raaka-aine'
-                value={ingredient.name}
-                onChange={this.handleIngredientChange(idx)}
-                onAddItem={this.handleIngredientNameAddition}
-              />
-              <Button
-                negative
-                onClick={this.handleRemoveIngredient(idx)}>
-                Poista
-              </Button>
-            </Form.Group>
-          ))}
+          {this.state.ingredients.map((ingredient, idx) => {
+            console.log('i', ingredient)
+            if (ingredient.type === 'title') {
+              return (
+                <Form.Group widths='equal' key={idx}>
+                  <Form.Input
+                    fluid
+                    name='name'
+                    placeholder='väliotsikko'
+                    //value={ingredient.name}
+                    onBlur={this.handleIngredientSubheadingChange(idx)}
+                  />
+                  <Button
+                    negative
+                    onClick={this.handleRemoveIngredient(idx)}>
+                    Poista
+                  </Button>
+                </Form.Group>
+              )
+            }
+            return (
+              <Form.Group widths='equal' key={idx}>
+                <Form.Input fluid
+                  name='quantity'
+                  placeholder='määrä'
+                  type='number'
+                  min='0'
+                  step='any'
+                  value={ingredient.quantity}
+                  onChange={this.handleIngredientChange(idx)}
+                />
+                <Form.Select fluid
+                  name='unit'
+                  search
+                  options={this.populateOptions(this.props.units)}
+                  placeholder='yksikkö'
+                  allowAdditions
+                  value={ingredient.unit}
+                  onChange={this.handleIngredientChange(idx)}
+                  onAddItem={this.handleUnitAddition}
+                />
+                <Form.Select fluid
+                  name='name'
+                  options={this.populateOptions(this.props.ingredients)}
+                  search
+                  allowAdditions
+                  placeholder='raaka-aine'
+                  value={ingredient.name}
+                  onChange={this.handleIngredientChange(idx)}
+                  onAddItem={this.handleIngredientNameAddition}
+                />
+                <Button
+                  negative
+                  onClick={this.handleRemoveIngredient(idx)}>
+                  Poista
+                </Button>
+              </Form.Group>
+            )
+          })}
           <Button
             type='button'
             onClick={this.handleAddIngredient}>
             Uusi raaka-aine
+          </Button>
+          <Button
+            type='button'
+            onClick={this.handleAddSubheading}>
+            Uusi väliotsikko
           </Button>
           <p></p>
           <Form.TextArea

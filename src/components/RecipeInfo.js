@@ -145,19 +145,27 @@ class RecipeInfo extends React.Component {
           <h2>Ainekset</h2>
           <Table compact basic='very' celled collapsing id='ingredients'>
             <Table.Body>
-              {recipe.ingredients.map(i =>
-                <Table.Row key={i.id}>
-                  <Table.Cell>
-                    {quantity(i.quantity)}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {i.unit.name}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {i.name.name}
-                  </Table.Cell>
-                </Table.Row>
-              )}
+              {recipe.ingredients.map(i => {
+                if (i.type === 'title')
+                  return (
+                    <Table.Row key={i.id}>
+                      <h3>{i.subheading}</h3>
+                    </Table.Row>
+                  )
+                return (
+                  <Table.Row key={i.id}>
+                    <Table.Cell>
+                      {quantity(i.quantity)}
+                    </Table.Cell>
+                    <Table.Cell>
+                      {i.unit.name}
+                    </Table.Cell>
+                    <Table.Cell>
+                      {i.name.name}
+                    </Table.Cell>
+                  </Table.Row>
+                )
+              })}
             </Table.Body>
           </Table>
           {instructions}
