@@ -2,7 +2,10 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { updateRecipe } from './../reducers/recipeReducer'
 import { newIngredient } from './../reducers/ingredientReducer'
-import { newSuccessNotification } from './../reducers/notificationReducer'
+import { newSuccessNotification, newErrorNotification } from './../reducers/notificationReducer'
+import { newIngredientUnit } from './../reducers/ingredientUnitReducer'
+import { newIngredientName } from './../reducers/ingredientNameReducer'
+import { newTag } from './../reducers/tagReducer'
 import { Form, Button } from 'semantic-ui-react'
 
 class EditRecipe extends React.Component {
@@ -16,7 +19,6 @@ class EditRecipe extends React.Component {
     cancel: false
   }
 
-
   populateOptions = (options) => {
     return options.map(o => ({ key: o.id, text: o.name, value: o.id }))
   }
@@ -24,7 +26,14 @@ class EditRecipe extends React.Component {
   handleAddIngredient = () => {
     this.setState({
       ingredients: this.state.ingredients
-        .concat([{ quantity: '', unit: '', name: '' }])
+        .concat([{ quantity: '', unit: '', name: '', subheading: '', type: 'ingredient' }])
+    })
+  }
+
+  handleAddSubheading = () => {
+    this.setState({
+      ingredients: this.state.ingredients
+        .concat([{ quantity: '', unit: '', name: '', subheading: '', type: 'title' }])
     })
   }
 
@@ -42,50 +51,103 @@ class EditRecipe extends React.Component {
     this.setState({ ingredients: newIngredients })
   }
 
+  handleIngredientSubheadingChange = (idx) => (event) => {
+    const newIngredients = this.state.ingredients.map((ingredient, ind) => {
+      if (ind !== idx) return ingredient
+      return { ...ingredient, subheading: event.target.value }
+    })
+    this.setState({ ingredients: newIngredients })
+  }
+
   handleFieldChange = (event) => {
     this.setState({ [event.target.name]: event.target.value })
   }
 
   handleTagChange = (event, data) => {
-    this.setState({ [data.name]: data.value })
+    const tags = data.value
+    const newTag = String (tags[tags.length - 1])
+    if (!this.props.tags.find(t => t.id === newTag)) {
+      tags.pop()
+    }
+    this.setState({ tags })
+  }
+
+  handleUnitAddition = (e, { value }) => {
+    const newUnit = {
+      name: value
+    }
+    if (window.confirm(`Haluatko varmasti lisätä uuden yksikön '${value}'?`)) {
+      this.props.newIngredientUnit(newUnit)
+    }
+  }
+
+  handleIngredientNameAddition = (e, { value }) => {
+    const newName = {
+      name: value
+    }
+    if (window.confirm(`Haluatko varmasti lisätä uuden raaka-aineen '${value}'?`)) {
+      this.props.newIngredientName(newName)
+    }
+  }
+
+  handleTagAddition = (e, { value }) => {
+    const newTag = {
+      name: value
+    }
+    if (window.confirm(`Haluatko varmasti lisätä uuden tagin '${value}'?`)) {
+      this.props.newTag(newTag)
+    }
   }
 
   onSubmit = async (event) => {
     event.preventDefault()
 
-    const ingredients = await Promise.all(this.state.ingredients.map(async (ing) => {
-      const ingredientObject = {
-        quantity: ing.quantity,
-        unit: ing.unit,
-        name: ing.name
-      }
-      return await this.props.newIngredient(ingredientObject)
-    }))
-
-    const recipe = this.props.recipe
-
-    const changedRecipe = {
-      id: recipe.id,
-      title: this.state.title,
-      ingredients,
-      instructions: this.state.instructions,
-      likes: recipe.likes,
-      tags: this.state.tags,
-      user: recipe.user,
-      likedUsers: recipe.likedUsers
+    let usedTitle = false
+    if (this.state.title !== this.props.recipe.title) {
+      usedTitle = this.props.recipes.find(r => r.title === this.state.title)
     }
+    if (usedTitle) {
+      this.props.newErrorNotification('Reseptin nimi on jo käytössä. Valitse toinen nimi.', 5)
+    } else if (this.state.title.length < 3) {
+      this.props.newErrorNotification('Reseptin nimen täytyy sisältää vähintään kolme merkkiä', 5)
+    } else {
 
-    await this.props.updateRecipe(changedRecipe)
+      const ingredients = await Promise.all(this.state.ingredients.map(async (ing) => {
+        const ingredientObject = {
+          quantity: ing.quantity,
+          unit: ing.unit,
+          name: ing.name,
+          subheading: ing.subheading,
+          type: ing.type
+        }
+        return await this.props.newIngredient(ingredientObject)
+      }))
 
-    this.props.newSuccessNotification('Resepti on päivitetty', 5)
+      const recipe = this.props.recipe
 
-    this.setState({
-      title: '',
-      ingredients: [{ quantity: '', unit: '', name: '' }],
-      instructions: '',
-      tags: [],
-      cancel: true
-    })
+      const changedRecipe = {
+        id: recipe.id,
+        title: this.state.title,
+        ingredients,
+        instructions: this.state.instructions,
+        likes: recipe.likes,
+        tags: this.state.tags,
+        user: recipe.user,
+        likedUsers: recipe.likedUsers
+      }
+
+      await this.props.updateRecipe(changedRecipe)
+
+      this.props.newSuccessNotification('Resepti on päivitetty', 5)
+
+      this.setState({
+        title: '',
+        ingredients: [],
+        instructions: '',
+        tags: [],
+        cancel: true
+      })
+    }
   }
 
   onCancel = () => {
@@ -109,43 +171,72 @@ class EditRecipe extends React.Component {
           />
           <strong>Ainekset</strong>
           <p></p>
-          {this.state.ingredients.map((ingredient, idx) => (
-            <Form.Group widths='equal' key={idx}>
-              <Form.Input fluid
-                name='quantity'
-                placeholder='määrä'
-                type='number'
-                min='0'
-                step='any'
-                value={ingredient.quantity}
-                onChange={this.handleIngredientChange(idx)}
-              />
-              <Form.Select fluid
-                name='unit'
-                options={this.populateOptions(this.props.units)}
-                placeholder='yksikkö'
-                value={ingredient.unit}
-                onChange={this.handleIngredientChange(idx)}
-              />
-              <Form.Select fluid
-                name='name'
-                options={this.populateOptions(this.props.ingredients)}
-                search
-                placeholder='raaka-aine'
-                value={ingredient.name}
-                onChange={this.handleIngredientChange(idx)}
-              />
-              <Button
-                negative
-                onClick={this.handleRemoveIngredient(idx)}>
-                Poista
-              </Button>
-            </Form.Group>
-          ))}
+          {this.state.ingredients.map((ingredient, idx) => {
+            if (ingredient.type === 'title') {
+              return (
+                <Form.Group widths='equal' key={idx}>
+                  <Form.Input
+                    fluid
+                    name='name'
+                    placeholder='väliotsikko'
+                    onBlur={this.handleIngredientSubheadingChange(idx)}
+                  />
+                  <Button
+                    negative
+                    onClick={this.handleRemoveIngredient(idx)}>
+                    Poista
+                  </Button>
+                </Form.Group>
+              )
+            }
+            return (
+              <Form.Group widths='equal' key={idx}>
+                <Form.Input fluid
+                  name='quantity'
+                  placeholder='määrä'
+                  type='number'
+                  min='0'
+                  step='any'
+                  value={ingredient.quantity}
+                  onChange={this.handleIngredientChange(idx)}
+                />
+                <Form.Select fluid
+                  name='unit'
+                  search
+                  options={this.populateOptions(this.props.units)}
+                  placeholder='yksikkö'
+                  allowAdditions
+                  value={ingredient.unit}
+                  onChange={this.handleIngredientChange(idx)}
+                  onAddItem={this.handleUnitAddition}
+                />
+                <Form.Select fluid
+                  name='name'
+                  options={this.populateOptions(this.props.ingredients)}
+                  search
+                  allowAdditions
+                  placeholder='raaka-aine'
+                  value={ingredient.name}
+                  onChange={this.handleIngredientChange(idx)}
+                  onAddItem={this.handleIngredientNameAddition}
+                />
+                <Button
+                  negative
+                  onClick={this.handleRemoveIngredient(idx)}>
+                  Poista
+                </Button>
+              </Form.Group>
+            )
+          })}
           <Button
             type='button'
             onClick={this.handleAddIngredient}>
             Uusi raaka-aine
+          </Button>
+          <Button
+            type='button'
+            onClick={this.handleAddSubheading}>
+            Uusi väliotsikko
           </Button>
           <p></p>
           <Form.TextArea
@@ -156,13 +247,17 @@ class EditRecipe extends React.Component {
           />
           <Form.Dropdown
             label='Tagit'
-            fluid multiple selection
+            fluid
+            multiple
+            selection
             options={this.populateOptions(this.props.tags)}
             search
+            allowAdditions
             placeholder=''
             name='tags'
             value={this.state.tags}
             onChange={this.handleTagChange}
+            onAddItem={this.handleTagAddition}
           />
         </Form>
         <p></p>
@@ -182,6 +277,7 @@ const sortAlphabetically = (a, b) => {
 
 const mapStateToProps = (state) => {
   return {
+    recipes: state.recipes,
     units: state.ingredientUnits.sort(sortAlphabetically),
     ingredients: state.ingredientNames.sort(sortAlphabetically),
     tags: state.tags.sort(sortAlphabetically)
@@ -190,5 +286,7 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  { updateRecipe, newIngredient, newSuccessNotification }
+  { updateRecipe, newIngredient, newSuccessNotification,
+    newErrorNotification, newIngredientUnit,
+    newIngredientName, newTag }
 )(EditRecipe)

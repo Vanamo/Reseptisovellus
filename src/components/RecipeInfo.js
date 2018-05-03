@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Button, Grid, Label, Segment, Table } from 'semantic-ui-react'
+import { Button, Grid, Header, Label, Segment, Table } from 'semantic-ui-react'
 import NoteForm from './NoteForm'
 import EditNote from './EditNote'
 import EditRecipe from './EditRecipe'
@@ -117,7 +117,7 @@ class RecipeInfo extends React.Component {
       } else {
         like = <LikeButton
           onClick={this.handleLike}
-          color='grey'
+          color='white'
           likes={this.props.likes.length}
         />
       }
@@ -149,7 +149,9 @@ class RecipeInfo extends React.Component {
                 if (i.type === 'title')
                   return (
                     <Table.Row key={i.id}>
-                      <h3>{i.subheading}</h3>
+                      <Table.Cell>
+                        <Header as='h3'>{i.subheading}</Header>
+                      </Table.Cell>
                     </Table.Row>
                   )
                 return (

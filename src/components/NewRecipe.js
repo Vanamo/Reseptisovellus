@@ -65,7 +65,12 @@ class NewRecipe extends React.Component {
   }
 
   handleTagChange = (event, data) => {
-    this.setState({ [data.name]: data.value })
+    const tags = data.value
+    const newTag = String (tags[tags.length - 1])
+    if (!this.props.tags.find(t => t.id === newTag)) {
+      tags.pop()
+    }
+    this.setState({ tags })
   }
 
   handleUnitAddition = (e, { value }) => {
@@ -99,8 +104,12 @@ class NewRecipe extends React.Component {
     event.preventDefault()
 
     console.log('ings', this.state.ingredients)
-    const oldTitle = this.props.recipes.find(r => r.title === this.state.title)
-    if (!oldTitle) {
+    const usedTitle = this.props.recipes.find(r => r.title === this.state.title)
+    if (usedTitle) {
+      this.props.newErrorNotification('Reseptin nimi on jo käytössä. Valitse toinen nimi.', 5)
+    } else if (this.state.title.length < 3) {
+      this.props.newErrorNotification('Reseptin nimen täytyy sisältää vähintään kolme merkkiä', 5)
+    } else {
 
       const ingredients = await Promise.all(this.state.ingredients.map(async (ing) => {
         const ingredientObject = {
@@ -113,6 +122,7 @@ class NewRecipe extends React.Component {
         return await this.props.newIngredient(ingredientObject)
       }))
 
+      console.log('tags', this.state.tags)
       const recipeObject = {
         title: this.state.title,
         ingredients,
@@ -132,9 +142,6 @@ class NewRecipe extends React.Component {
         tags: [],
         newRecipe
       })
-
-    } else {
-      this.props.newErrorNotification('Reseptin nimi on jo käytössä. Valitse toinen nimi.', 5)
     }
   }
 
@@ -163,7 +170,6 @@ class NewRecipe extends React.Component {
                     fluid
                     name='name'
                     placeholder='väliotsikko'
-                    //value={ingredient.name}
                     onBlur={this.handleIngredientSubheadingChange(idx)}
                   />
                   <Button
@@ -251,9 +257,18 @@ class NewRecipe extends React.Component {
   }
 }
 
+const sortAlphabetically = (a, b) => {
+  if (a.name < b.name) return -1
+  if (a.name > b.name) return 1
+  return 0
+}
+
 const mapStateToProps = (state) => {
   return {
-    recipes: state.recipes
+    recipes: state.recipes,
+    units: state.ingredientUnits.sort(sortAlphabetically),
+    ingredients: state.ingredientNames.sort(sortAlphabetically),
+    tags: state.tags.sort(sortAlphabetically)
   }
 }
 

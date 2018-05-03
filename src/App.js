@@ -96,11 +96,7 @@ class App extends React.Component {
               <Login history={history} />
             } />
             <Route exact path='/newRecipe' render={() =>
-              <NewRecipe
-                ingredients={this.props.ingredientNames}
-                units={this.props.ingredientUnits}
-                tags={this.props.tags}
-              />
+              <NewRecipe />
             } />
             <Route exact path='/favorites' render={() =>
               <Favorites
@@ -114,20 +110,14 @@ class App extends React.Component {
   }
 }
 
-const sortAlphabetically = (a, b) => {
-  if (a.name < b.name) return -1
-  if (a.name > b.name) return 1
-  return 0
-}
-
 const mapStateToProps = (state) => {
   return {
     user: state.user,
     allUsers: state.allUsers,
     recipes: state.recipes,
-    ingredientUnits: state.ingredientUnits.sort(sortAlphabetically),
-    ingredientNames: state.ingredientNames.sort(sortAlphabetically),
-    tags: state.tags.sort(sortAlphabetically),
+    ingredientUnits: state.ingredientUnits,
+    ingredientNames: state.ingredientNames,
+    tags: state.tags,
     recipeNotes: state.recipeNotes,
     likes: state.likes
   }
