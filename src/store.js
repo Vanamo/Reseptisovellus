@@ -9,6 +9,7 @@ import tagReducer from './reducers/tagReducer'
 import recipeNoteReducer from './reducers/recipeNoteReducer'
 import likeReducer from './reducers/likeReducer'
 import allUsersReducer from './reducers/allUsersReducer'
+import recipeEmphasisReducer from './reducers/recipeEmphasisReducer'
 
 const reducer = combineReducers({
   recipes: recipeReducer,
@@ -19,7 +20,8 @@ const reducer = combineReducers({
   ingredientNames: ingredientNameReducer,
   tags: tagReducer,
   recipeNotes: recipeNoteReducer,
-  likes: likeReducer
+  likes: likeReducer,
+  recipeEmphases: recipeEmphasisReducer
 })
 
 const store = createStore(

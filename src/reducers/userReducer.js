@@ -2,6 +2,7 @@ import loginService from '../services/login'
 import recipeService from '../services/recipes'
 import recipeNoteService from '../services/recipeNotes'
 import likeService from '../services/likes'
+import recipeEmphasisService from '../services/recipeEmphases'
 
 const initialState = {
   id: null,
@@ -37,6 +38,7 @@ export const loginUser = (userData) => {
       recipeService.setToken(loggedUser.token)
       recipeNoteService.setToken(loggedUser.token)
       likeService.setToken(loggedUser.token)
+      recipeEmphasisService.setToken(loggedUser.token)
       dispatch({
         type: 'LOGIN_USER',
         user: loggedUser

@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import recipeService from './services/recipes'
 import recipeNoteService from './services/recipeNotes'
 import likeService from './services/likes'
+import recipeEmphasisService from './services/recipeEmphases'
 import { initRecipes } from './reducers/recipeReducer'
 import Login from './components/Login'
 import Notification from './components/Notification'
@@ -18,6 +19,7 @@ import { initTags } from './reducers/tagReducer'
 import { initRecipeNotes } from './reducers/recipeNoteReducer'
 import { initLikes } from './reducers/likeReducer'
 import { initUsers } from './reducers/allUsersReducer'
+import { initRecipeEmphases } from './reducers/recipeEmphasisReducer'
 import RecipeInfo from './components/RecipeInfo'
 import Favorites from './components/Favorites'
 
@@ -31,6 +33,7 @@ class App extends React.Component {
     this.props.initRecipeNotes()
     this.props.initLikes()
     this.props.initUsers()
+    this.props.initRecipeEmphases()
 
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
     if (loggedUserJSON) {
@@ -39,6 +42,7 @@ class App extends React.Component {
       recipeService.setToken(user.token)
       recipeNoteService.setToken(user.token)
       likeService.setToken(user.token)
+      recipeEmphasisService.setToken(user.token)
     }
   }
 
@@ -67,6 +71,12 @@ class App extends React.Component {
       return likes
     }
 
+    const emphasisById = (recipeid) => {
+      console.log('emphases', this.props.recipeEmphases)
+      const emphasis = this.props.recipeEmphases.filter(e => String(e.recipeid) === String(recipeid))
+      return emphasis
+    }
+
     return (
       <Container>
         <Router>
@@ -89,6 +99,7 @@ class App extends React.Component {
                 recipe={recipeById(match.params.id)}
                 note={noteById(match.params.id)}
                 likes={likesById(match.params.id)}
+                emphasis={emphasisById(match.params.id)}
                 user={this.props.user}
               />}
             />
@@ -111,6 +122,7 @@ class App extends React.Component {
 }
 
 const mapStateToProps = (state) => {
+  console.log('e state', state.recipeEmphases)
   return {
     user: state.user,
     allUsers: state.allUsers,
@@ -119,7 +131,8 @@ const mapStateToProps = (state) => {
     ingredientNames: state.ingredientNames,
     tags: state.tags,
     recipeNotes: state.recipeNotes,
-    likes: state.likes
+    likes: state.likes,
+    recipeEmphases: state.recipeEmphases
   }
 }
 
@@ -129,6 +142,6 @@ export default connect(
     initRecipes, setUser, loginUser, logoutUser,
     initIngredientUnits,
     initIngredientNames, initTags, initRecipeNotes,
-    initLikes, initUsers
+    initLikes, initUsers, initRecipeEmphases
   }
 )(App)

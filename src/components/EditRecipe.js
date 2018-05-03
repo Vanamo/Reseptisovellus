@@ -185,9 +185,7 @@ class EditRecipe extends React.Component {
                   <Form.Input
                     fluid
                     name='name'
-                    placeholder={ingredient.subheading}
-                    //placeholder='väliotsikko'
-                    //value={ingredient.subheading}
+                    defaultValue={ingredient.subheading}
                     onBlur={this.handleIngredientSubheadingChange(idx)}
                   />
                   <Button
