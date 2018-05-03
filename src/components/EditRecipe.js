@@ -13,7 +13,13 @@ class EditRecipe extends React.Component {
   state = {
     title: this.props.recipe.title,
     ingredients: this.props.recipe.ingredients
-      .map(i => ({ quantity: i.quantity, name: i.name._id, unit: i.unit._id })),
+      .map(i => ({
+        quantity: i.quantity,
+        name: i.name._id,
+        unit: i.unit._id,
+        subheading: i.subheading,
+        type: i.type
+      })),
     instructions: this.props.recipe.instructions,
     tags: this.props.recipe.tags.map(t => t._id),
     cancel: false
@@ -172,13 +178,16 @@ class EditRecipe extends React.Component {
           <strong>Ainekset</strong>
           <p></p>
           {this.state.ingredients.map((ingredient, idx) => {
+            console.log('i', ingredient)
             if (ingredient.type === 'title') {
               return (
                 <Form.Group widths='equal' key={idx}>
                   <Form.Input
                     fluid
                     name='name'
-                    placeholder='väliotsikko'
+                    placeholder={ingredient.subheading}
+                    //placeholder='väliotsikko'
+                    //value={ingredient.subheading}
                     onBlur={this.handleIngredientSubheadingChange(idx)}
                   />
                   <Button

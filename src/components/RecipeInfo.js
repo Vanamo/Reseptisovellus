@@ -117,7 +117,7 @@ class RecipeInfo extends React.Component {
       } else {
         like = <LikeButton
           onClick={this.handleLike}
-          color='white'
+          color={undefined}
           likes={this.props.likes.length}
         />
       }
