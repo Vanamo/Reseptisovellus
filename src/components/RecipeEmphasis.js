@@ -6,29 +6,45 @@ import { connect } from 'react-redux'
 class RecipeEmphasis extends React.Component {
 
   state = {
-    value: this.props.emphasis.content || 'no'
+    value: this.props.emphasis.content
+  }
+
+  static getDerivedStateFromProps(nextProps) {
+    console.log('props', nextProps)
   }
 
   handleChange = async (e, { value }) => {
     this.setState({ value })
 
     if (value !== 'no') {
-      const emphasisObject = {
-        content: value,
-        recipeid: this.props.recipe.id
+      if (this.props.emphasis._id) {
+        const changedEmphasis = { ...this.props.emphasis, content: value }
+        await this.props.updateRecipeEmphasis(changedEmphasis)
+
+        this.setState({
+          value: changedEmphasis.content
+        })
+      } else {
+        const emphasisObject = {
+          content: value,
+          recipeid: this.props.recipe.id
+        }
+        await this.props.newRecipeEmphasis(emphasisObject)
+        this.setState({
+          value: emphasisObject.content
+        })
       }
-      const newEmphasis = await this.props.newRecipeEmphasis(emphasisObject)
-      this.setState({
-        value: newEmphasis.content
-      })
+    } else if (value === 'no') {
+      await this.props.deleteRecipeEmphasis(this.props.emphasis)
     }
   }
 
   render() {
     console.log('e', this.props.emphasis)
-    if (!this.props.user.id) {
+    if (!this.props.user.id || !this.props.emphasis) {
       return null
     }
+
     return (
       <div>
         <h3>Painotus ruokalistalla</h3>
@@ -56,7 +72,7 @@ class RecipeEmphasis extends React.Component {
               onChange={this.handleChange}
             />
             <Form.Radio
-              label='1'
+              label='+1'
               name='menuEmphasis'
               value={1}
               checked={this.state.value === 1}
@@ -69,7 +85,13 @@ class RecipeEmphasis extends React.Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    recipeEmphases: state.recipeEmphases
+  }
+}
+
 export default connect(
-  null,
+  mapStateToProps,
   { newRecipeEmphasis, updateRecipeEmphasis, deleteRecipeEmphasis }
 )(RecipeEmphasis)

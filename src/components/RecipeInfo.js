@@ -59,7 +59,6 @@ class RecipeInfo extends React.Component {
     const recipe = this.props.recipe
     const user = this.props.user
     const note = this.props.note
-    const emphasis = this.props.emphasis
 
     if (!recipe) {
       return null
@@ -132,6 +131,11 @@ class RecipeInfo extends React.Component {
         user={user} />
     }
 
+    let emphasis = null
+    if (this.props.emphasis) {
+      emphasis = <RecipeEmphasis user={user} recipe={recipe} emphasis={this.props.emphasis} />
+    }
+
     const quantity = (q) => {
       if (q === 0) {
         return null
@@ -178,7 +182,7 @@ class RecipeInfo extends React.Component {
           {noteToShow}
           {this.state.showNoteForm && <NoteForm recipe={recipe} />}
           {this.state.showEditNoteForm && <EditNote note={note} />}
-          {<RecipeEmphasis user={user} recipe={recipe} emphasis={emphasis} />}
+          {emphasis}
         </Grid.Column>
       </Grid>
     )

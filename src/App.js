@@ -73,7 +73,14 @@ class App extends React.Component {
 
     const emphasisById = (recipeid) => {
       console.log('emphases', this.props.recipeEmphases)
-      const emphasis = this.props.recipeEmphases.filter(e => String(e.recipeid) === String(recipeid))
+      if (!this.props.recipeEmphases) {
+        return null
+      }
+      let emphasis = this.props.recipeEmphases.find(e => String(e.recipeid) === String(recipeid))
+      if (!emphasis) {
+        emphasis = { content: 'no' }
+      }
+      console.log('e1', emphasis)
       return emphasis
     }
 
@@ -122,7 +129,6 @@ class App extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log('e state', state.recipeEmphases)
   return {
     user: state.user,
     allUsers: state.allUsers,

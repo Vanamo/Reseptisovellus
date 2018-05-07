@@ -1,6 +1,6 @@
 import recipeEmphasesService from './../services/recipeEmphases'
 
-const reducer = (state = [], action) => {
+const reducer = (state = null, action) => {
   switch(action.type) {
   case 'INIT_RECIPEEMPHASES':
     return action.data
@@ -25,7 +25,6 @@ export const newRecipeEmphasis = (emphasisObject) => {
       type: 'NEW_RECIPEEMPHASIS',
       data: newEmphasis
     })
-    return newEmphasis
   }
 }
 
