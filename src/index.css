@@ -1,3 +1,9 @@
 #ingredients tr td { border: 0 !important; }
-.recipe div { margin-top: 2em; margin-bottom: 2em; }
-.note div { margin-top: 2em; margin-bottom: 0 }
+.ui.grid.recipe {
+    margin-top: 2em; 
+    margin-bottom: 2em; 
+  }
+.note { margin-top: 2em; }
+.note div { margin-top: 2em; margin-bottom: 0; }
+.emphasis { margin-top: 2em; }
+.tags { margin-top: 2em; margin-bottom: 2em; }

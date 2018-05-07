@@ -42,7 +42,6 @@ class RecipeInfo extends React.Component {
 
   handleDislike = async () => {
     const like = this.props.likes.find(l => l.userid === this.props.user.id)
-    console.log('like', like)
     await this.props.deleteLike(like)
 
     window.location.reload()
@@ -57,15 +56,25 @@ class RecipeInfo extends React.Component {
 
   render() {
     const recipe = this.props.recipe
-    const user = this.props.user
     const note = this.props.note
+    let user = this.props.user
+    if (this.props.user.id) {
+      user = this.props.allUsers.find(au => au.id === this.props.user.id)
+    }
 
-    if (!recipe) {
+    if (!recipe || !this.props.allUsers.length) {
       return null
     }
 
+    let userRecipes = null
+    let ownRecipe = null
+    if (user.id) {
+      userRecipes = user.recipes.concat(user.likedRecipes)
+      ownRecipe = userRecipes.find(ur => ur === recipe.id)
+    }
+
     let noteToShow = null
-    if (user.id &&
+    if (ownRecipe &&
       !note &&
       !this.state.showNoteForm) {
       noteToShow = (
@@ -93,12 +102,12 @@ class RecipeInfo extends React.Component {
 
     let tags = null
     if (recipe.tags.length > 0) {
-      tags = (<div>{recipe.tags.map(t => <Label key={t._id}>{t.name}</Label>)}</div>)
+      tags = (<div className='tags'>{recipe.tags.map(t => <Label key={t._id}>{t.name}</Label>)}</div>)
     }
 
     let edit = null
     if (user.id === recipe.user._id) {
-      edit = (<Button onClick={this.showEditRecipe} color='black'>Muokkaa reseptiä</Button>)
+      edit = (<div><Button onClick={this.showEditRecipe} color='black'>Muokkaa reseptiä</Button></div>)
     }
 
     let like = null
@@ -132,7 +141,7 @@ class RecipeInfo extends React.Component {
     }
 
     let emphasis = null
-    if (this.props.emphasis) {
+    if (ownRecipe && this.props.emphasis) {
       emphasis = <RecipeEmphasis user={user} recipe={recipe} emphasis={this.props.emphasis} />
     }
 
@@ -145,51 +154,67 @@ class RecipeInfo extends React.Component {
 
     return (
       <Grid className='recipe'>
-        <Grid.Column width={6}>
-          <h1>{recipe.title}</h1>
-          {like}
-          <h2>Ainekset</h2>
-          <Table compact basic='very' celled collapsing id='ingredients'>
-            <Table.Body>
-              {recipe.ingredients.map(i => {
-                if (i.type === 'title')
+
+        <Grid.Row columns={1}>
+          <Grid.Column width={16}>
+            <h1>{recipe.title}</h1>
+          </Grid.Column>
+        </Grid.Row>
+
+        <Grid.Row columns={2}>
+          <Grid.Column computer={8} mobile={16}>
+            {like}
+            <h2>Ainekset</h2>
+            <Table compact basic='very' celled collapsing id='ingredients'>
+              <Table.Body>
+                {recipe.ingredients.map(i => {
+                  if (i.type === 'title')
+                    return (
+                      <Table.Row key={i.id}>
+                        <Table.Cell>
+                          <Header as='h3'>{i.subheading}</Header>
+                        </Table.Cell>
+                      </Table.Row>
+                    )
                   return (
                     <Table.Row key={i.id}>
                       <Table.Cell>
-                        <Header as='h3'>{i.subheading}</Header>
+                        {quantity(i.quantity)}
+                      </Table.Cell>
+                      <Table.Cell>
+                        {i.unit.name}
+                      </Table.Cell>
+                      <Table.Cell>
+                        {i.name.name}
                       </Table.Cell>
                     </Table.Row>
                   )
-                return (
-                  <Table.Row key={i.id}>
-                    <Table.Cell>
-                      {quantity(i.quantity)}
-                    </Table.Cell>
-                    <Table.Cell>
-                      {i.unit.name}
-                    </Table.Cell>
-                    <Table.Cell>
-                      {i.name.name}
-                    </Table.Cell>
-                  </Table.Row>
-                )
-              })}
-            </Table.Body>
-          </Table>
-          {instructions}
-          {tags}
-          {edit}
-          {noteToShow}
-          {this.state.showNoteForm && <NoteForm recipe={recipe} />}
-          {this.state.showEditNoteForm && <EditNote note={note} />}
-          {emphasis}
-        </Grid.Column>
+                })}
+              </Table.Body>
+            </Table>
+            {instructions}
+            {tags}
+            {edit}
+          </Grid.Column>
+          <Grid.Column computer={8} mobile={16}>
+            {noteToShow}
+            {this.state.showEditNoteForm && <EditNote note={note} />}
+            {this.state.showNoteForm && <NoteForm recipe={recipe} />}
+            {emphasis}
+          </Grid.Column>
+        </Grid.Row>
       </Grid>
     )
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    allUsers: state.allUsers,
+  }
+}
+
 export default connect(
-  null,
+  mapStateToProps,
   { newLike, deleteLike, deleteRecipeNote, newSuccessNotification }
 )(RecipeInfo)

@@ -17,7 +17,7 @@ class RecipeEmphasis extends React.Component {
     this.setState({ value })
 
     if (value !== 'no') {
-      if (this.props.emphasis._id) {
+      if (this.props.emphasis.id) {
         const changedEmphasis = { ...this.props.emphasis, content: value }
         await this.props.updateRecipeEmphasis(changedEmphasis)
 
@@ -46,7 +46,7 @@ class RecipeEmphasis extends React.Component {
     }
 
     return (
-      <div>
+      <div className='emphasis'>
         <h3>Painotus ruokalistalla</h3>
         <Form>
           <Form.Radio

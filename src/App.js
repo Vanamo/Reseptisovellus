@@ -66,13 +66,11 @@ class App extends React.Component {
     }
 
     const likesById = (recipeid) => {
-      console.log('proplikes', this.props.likes)
       const likes = this.props.likes.filter(l => String(l.recipeid) === String(recipeid))
       return likes
     }
 
     const emphasisById = (recipeid) => {
-      console.log('emphases', this.props.recipeEmphases)
       if (!this.props.recipeEmphases) {
         return null
       }
@@ -80,7 +78,6 @@ class App extends React.Component {
       if (!emphasis) {
         emphasis = { content: 'no' }
       }
-      console.log('e1', emphasis)
       return emphasis
     }
 
