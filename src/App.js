@@ -22,6 +22,7 @@ import { initUsers } from './reducers/allUsersReducer'
 import { initRecipeEmphases } from './reducers/recipeEmphasisReducer'
 import RecipeInfo from './components/RecipeInfo'
 import Favorites from './components/Favorites'
+import RecipeMenu from './components/RecipeMenu'
 
 class App extends React.Component {
 
@@ -115,6 +116,11 @@ class App extends React.Component {
             } />
             <Route exact path='/favorites' render={() =>
               <Favorites
+                user={this.props.user}
+              />
+            } />
+            <Route exact path='/menu' render={() =>
+              <RecipeMenu
                 user={this.props.user}
               />
             } />

@@ -37,6 +37,8 @@ class RecipeEmphasis extends React.Component {
     } else if (value === 'no') {
       await this.props.deleteRecipeEmphasis(this.props.emphasis)
     }
+
+    window.location.reload()
   }
 
   render() {

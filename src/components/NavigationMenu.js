@@ -4,9 +4,7 @@ import { Link } from 'react-router-dom'
 
 class NavigationMenu extends React.Component {
 
-  state = {
-    activeItem: 'home'
-  }
+  state = {}
 
   handleClick = (e, { name }) => {
     this.setState({ activeItem: name })
@@ -23,7 +21,7 @@ class NavigationMenu extends React.Component {
     const user = this.props.user
     if (user.id === null) {
       return (
-        <Menu inverted>
+        <Menu stackable inverted>
           <Menu.Item as={Link} to='/' name='home' active={activeItem === 'home'} onClick={this.handleClick}>
             Reseptit
           </Menu.Item>
@@ -37,7 +35,7 @@ class NavigationMenu extends React.Component {
     }
 
     return (
-      <Menu inverted>
+      <Menu stackable inverted>
         <Menu.Item as={Link} to='/' name='home' active={activeItem === 'home'} onClick={this.handleClick}>
           Reseptit
         </Menu.Item>
@@ -47,6 +45,10 @@ class NavigationMenu extends React.Component {
         <Menu.Item as={Link} to='/favorites' name='favorites' active={activeItem === 'favorites'} onClick={this.handleClick}>
           Suosikit
         </Menu.Item>
+        <Menu.Item as={Link} to='/menu' name='menu' active={activeItem === 'menu'} onClick={this.handleClick}>
+          Ruokalista
+        </Menu.Item>
+
         <Menu.Menu position='right'>
           <Menu.Item>{user.username}</Menu.Item>
           <Menu.Item as={Link} to='/' onClick={this.doLogout}>

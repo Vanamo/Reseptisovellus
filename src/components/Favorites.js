@@ -21,15 +21,24 @@ class Favorites extends React.Component {
     )
   }
 
+  emphasis = (recipe) => {
+    const emphasis = this.props.emphases.filter(e => e.userid === this.props.user.id)
+      .find(e => e.recipeid === recipe.id)
+    if (emphasis) {
+      return <p color='black'>{emphasis.content}</p>
+    } else {
+      return <p color='black'>ei ruokalistalla</p>
+    }
+  }
+
   render() {
-    if (!this.props.user.id) {
+    if (!this.props.user.id || !this.props.emphases) {
       return null
     }
     if (!this.props.allUsers.length) {
       return null
     }
     const user = this.props.allUsers.find(au => au.id === this.props.user.id)
-    console.log('user', user)
 
     let buttonLiked = <Button onClick={this.handleClick} value={'liked'}>Tykätyt</Button>
     let buttonAll = <Button onClick={this.handleClick} value={'all'}>Kaikki</Button>
@@ -72,11 +81,21 @@ class Favorites extends React.Component {
         <h2>Suosikkireseptit</h2>
         <div>{buttons}</div>
         <Table basic='very'>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell>Reseptejä yhteensä {recipes.length} kpl</Table.HeaderCell>
+              <Table.HeaderCell>Painotus ruokalistalla</Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
+
           <Table.Body>
             {recipes.map(r =>
               <Table.Row key={r.id}>
                 <Table.Cell>
                   <Link to={`/recipes/${r.id}`}>{r.title}</Link>
+                </Table.Cell>
+                <Table.Cell>
+                  {this.emphasis(r)}
                 </Table.Cell>
               </Table.Row>
             )}
@@ -90,7 +109,8 @@ class Favorites extends React.Component {
 const mapStateToProps = (state) => {
   return {
     allUsers: state.allUsers,
-    recipes: state.recipes
+    recipes: state.recipes,
+    emphases: state.recipeEmphases
   }
 }
 

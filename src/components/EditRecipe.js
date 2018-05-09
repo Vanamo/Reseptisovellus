@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { updateRecipe } from './../reducers/recipeReducer'
 import { newIngredient } from './../reducers/ingredientReducer'
-import { newSuccessNotification, newErrorNotification } from './../reducers/notificationReducer'
+import { newErrorNotification } from './../reducers/notificationReducer'
 import { newIngredientUnit } from './../reducers/ingredientUnitReducer'
 import { newIngredientName } from './../reducers/ingredientNameReducer'
 import { newTag } from './../reducers/tagReducer'
@@ -143,8 +143,6 @@ class EditRecipe extends React.Component {
       }
 
       await this.props.updateRecipe(changedRecipe)
-
-      this.props.newSuccessNotification('Resepti on päivitetty', 5)
 
       this.setState({
         title: '',
@@ -293,7 +291,7 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  { updateRecipe, newIngredient, newSuccessNotification,
+  { updateRecipe, newIngredient,
     newErrorNotification, newIngredientUnit,
     newIngredientName, newTag }
 )(EditRecipe)
