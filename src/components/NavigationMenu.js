@@ -1,11 +1,10 @@
 import React from 'react'
 import { Menu } from 'semantic-ui-react'
-import { NavLink, Redirect } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 class NavigationMenu extends React.Component {
 
   state = {
-    logout: false,
     activeItem: 'home'
   }
 
@@ -15,13 +14,9 @@ class NavigationMenu extends React.Component {
 
   doLogout = () => {
     this.props.handleLogout()
-    this.setState({ logout: true })
   }
 
   render() {
-    if (this.state.logout) {
-      return <Redirect to='/' />
-    }
 
     const { activeItem } = this.state
 
@@ -29,12 +24,12 @@ class NavigationMenu extends React.Component {
     if (user.id === null) {
       return (
         <Menu inverted>
-          <Menu.Item link name='home' active={activeItem === 'home'} onClick={this.handleClick}>
-            <NavLink exact to='/'>Reseptit</NavLink>
+          <Menu.Item as={Link} to='/' name='home' active={activeItem === 'home'} onClick={this.handleClick}>
+            Reseptit
           </Menu.Item>
           <Menu.Menu position='right'>
-            <Menu.Item link name='login' active={activeItem === 'login'} onClick={this.handleClick}>
-              <NavLink exact to='/login'>Kirjaudu</NavLink>
+            <Menu.Item as={Link} to='/login' name='login' active={activeItem === 'login'} onClick={this.handleClick}>
+              Kirjaudu
             </Menu.Item>
           </Menu.Menu>
         </Menu>
@@ -43,19 +38,19 @@ class NavigationMenu extends React.Component {
 
     return (
       <Menu inverted>
-        <Menu.Item link name='home' active={activeItem === 'home'} onClick={this.handleClick}>
-          <NavLink exact to='/'>Reseptit</NavLink>
+        <Menu.Item as={Link} to='/' name='home' active={activeItem === 'home'} onClick={this.handleClick}>
+          Reseptit
         </Menu.Item>
-        <Menu.Item link name='add' active={activeItem === 'add'} onClick={this.handleClick}>
-          <NavLink exact to='/newRecipe'>Lisää resepti</NavLink>
+        <Menu.Item as={Link} to='/newRecipe' name='add' active={activeItem === 'add'} onClick={this.handleClick}>
+          Lisää resepti
         </Menu.Item>
-        <Menu.Item link name='favorites' active={activeItem === 'favorites'} onClick={this.handleClick}>
-          <NavLink exact to='/favorites'>Suosikit</NavLink>
+        <Menu.Item as={Link} to='/favorites' name='favorites' active={activeItem === 'favorites'} onClick={this.handleClick}>
+          Suosikit
         </Menu.Item>
         <Menu.Menu position='right'>
           <Menu.Item>{user.username}</Menu.Item>
-          <Menu.Item link>
-            <a href='' onClick={this.doLogout}>Kirjaudu ulos</a>
+          <Menu.Item as={Link} to='/' onClick={this.doLogout}>
+            Kirjaudu ulos
           </Menu.Item>
         </Menu.Menu>
       </Menu>
