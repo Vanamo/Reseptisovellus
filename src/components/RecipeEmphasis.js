@@ -42,7 +42,7 @@ class RecipeEmphasis extends React.Component {
   }
 
   render() {
-    console.log('e', this.props.emphasis)
+    console.log('e', this.props.emphasis, this.props.user.id)
     if (!this.props.user.id || !this.props.emphasis) {
       return null
     }

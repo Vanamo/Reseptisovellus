@@ -75,7 +75,8 @@ class App extends React.Component {
       if (!this.props.recipeEmphases) {
         return null
       }
-      let emphasis = this.props.recipeEmphases.find(e => String(e.recipeid) === String(recipeid))
+      let emphasis = this.props.recipeEmphases.filter(e => String(e.recipeid) === String(recipeid))
+        .find(e => String(e.userid) === String(this.props.user.id))
       if (!emphasis) {
         emphasis = { content: 'no' }
       }

@@ -5,6 +5,11 @@ import { Link } from 'react-router-dom'
 
 class RecipeMenu extends React.Component {
 
+  state = {
+    items: undefined,
+    recipes: []
+  }
+
   emphasis = (recipe) => {
     const emphasis = this.props.emphases.filter(e => e.userid === this.props.user.id)
       .find(e => e.recipeid === recipe.id)
@@ -15,19 +20,45 @@ class RecipeMenu extends React.Component {
     }
   }
 
-  render() {
+  handleChange = (e, { value }) => {
+    this.setState({ value })
+  }
 
-    if (!this.props.recipes.length || !this.props.emphases) {
-      return null
-    }
-
+  recipes = () => {
     const recipeIds = this.props.emphases.filter(e => e.userid === this.props.user.id)
       .map(e => e.recipeid)
     const recipes = this.props.recipes.filter(r => recipeIds.indexOf(r.id) !== -1)
+    return recipes
+  }
+
+  onSubmit = (e) => {
+    e.preventDefault()
+
+    //console.log('r', recipes)
+
+    const user = this.props.allUsers.find(au => au.id === this.props.user.id)
+
+    //const updatedUser = { ...user, drawnRecipes }
+  }
+
+  render() {
+
+    if (!this.props.recipes.length || !this.props.emphases || !this.props.allUsers.length) {
+      return null
+    }
+
+    const user = this.props.allUsers.find(au => au.id === this.props.user.id)
+
+    let recipes = null
+    if (!user.drawnRecipes.length) {
+      recipes = this.recipes()
+    } else {
+      recipes = user.drawnRecipes
+    }
 
 
     if (recipes.length < 1) {
-      return(<h3>Et ole valinnut yhtään reseptiä ruokalistalle</h3>)
+      return (<h3>Et ole valinnut yhtään reseptiä ruokalistalle</h3>)
     }
 
     return (
@@ -39,9 +70,10 @@ class RecipeMenu extends React.Component {
             <Form.Group>
               <Form.Field inline>
                 <label>Kuinka monta reseptiä arvotaan ruokalistalle:</label>
-                <Input type='number' min='1' step='1' max={recipes.length} />
+                <Input name='items' type='number' min='1' step='1' max={recipes.length}
+                  onChange={this.handleChange} />
               </Form.Field>
-              <Button type='submit'>Arvo</Button>
+              <Button type='submit' onSubmit={this.onSubmit}>Arvo</Button>
             </Form.Group>
           </Form>
         </h3>
@@ -75,6 +107,7 @@ class RecipeMenu extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
+    allUsers: state.allUsers,
     recipes: state.recipes,
     emphases: state.recipeEmphases
   }
