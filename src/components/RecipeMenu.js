@@ -2,43 +2,81 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Button, Form, Input, Table } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
+import { updateUser } from './../reducers/allUsersReducer'
 
 class RecipeMenu extends React.Component {
 
   state = {
     items: undefined,
-    recipes: []
-  }
-
-  emphasis = (recipe) => {
-    const emphasis = this.props.emphases.filter(e => e.userid === this.props.user.id)
-      .find(e => e.recipeid === recipe.id)
-    if (emphasis) {
-      return <p color='black'>{emphasis.content}</p>
-    } else {
-      return <p color='black'>ei ruokalistalla</p>
-    }
   }
 
   handleChange = (e, { value }) => {
-    this.setState({ value })
+    this.setState({ items: value })
   }
 
-  recipes = () => {
-    const recipeIds = this.props.emphases.filter(e => e.userid === this.props.user.id)
-      .map(e => e.recipeid)
-    const recipes = this.props.recipes.filter(r => recipeIds.indexOf(r.id) !== -1)
+  recipes = (user, flag) => {
+    let emphases = this.props.emphases.filter(e => e.userid === this.props.user.id)
+    if (flag) {
+      emphases = emphases.filter(e => user.drawnRecipes.indexOf(e.recipeid) !== -1)      
+    }
+    const recipes = emphases.map(em => {
+      return Object.assign({}, em, this.props.recipes.filter(re => re.id === em.recipeid)[0])
+    })
     return recipes
   }
 
-  onSubmit = (e) => {
+  shuffle = (a) => {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  drawnRecipes = () => {
+    const allRecipes = this.recipes()
+    const emphasizedRecipes = []
+    //more emphasized recipes are added to the array several times
+    allRecipes.forEach(r => {
+      if (r.content === -1) {
+        emphasizedRecipes.push(r)
+      } else if (r.content === 0) {
+        emphasizedRecipes.push(r)
+        emphasizedRecipes.push(r)
+      } else if (r.content === 1) {
+        emphasizedRecipes.push(r)
+        emphasizedRecipes.push(r)
+        emphasizedRecipes.push(r)
+      }
+    })
+    //shuffle
+    const shuffled = this.shuffle(emphasizedRecipes)
+    //remove duplicate recipes
+    const uniqueAndShuffled = shuffled.filter((s, ind) => shuffled.indexOf(s) === ind)
+    //select the first n recipes
+    const selected = uniqueAndShuffled.slice(0, this.state.items).map(r => r.id)
+
+    return selected
+  }
+
+  findUser = () => {
+    return this.props.allUsers.find(au => au.id === this.props.user.id)
+  }
+
+  handleClick = async() => {
+    const user = this.findUser()
+    const updatedUser = { ...user, drawnRecipes: [] }
+    await this.props.updateUser(updatedUser)
+  }
+
+  onSubmit = async (e) => {
     e.preventDefault()
 
-    //console.log('r', recipes)
+    const drawnRecipes = this.drawnRecipes()
+    const user = this.findUser()
+    const updatedUser = { ...user, drawnRecipes }
 
-    const user = this.props.allUsers.find(au => au.id === this.props.user.id)
-
-    //const updatedUser = { ...user, drawnRecipes }
+    await this.props.updateUser(updatedUser)
   }
 
   render() {
@@ -49,13 +87,14 @@ class RecipeMenu extends React.Component {
 
     const user = this.props.allUsers.find(au => au.id === this.props.user.id)
 
-    let recipes = null
-    if (!user.drawnRecipes.length) {
-      recipes = this.recipes()
-    } else {
-      recipes = user.drawnRecipes
-    }
+    const flag = user.drawnRecipes.length
+    const recipes = this.recipes(user, flag)
+    const allRecipes = this.recipes(user, false)
 
+    let clear = null
+    if (flag) {
+      clear = <Button negative onClick={this.handleClick}>Tyhjennä</Button>
+    }
 
     if (recipes.length < 1) {
       return (<h3>Et ole valinnut yhtään reseptiä ruokalistalle</h3>)
@@ -66,22 +105,24 @@ class RecipeMenu extends React.Component {
         <h2>Ruokalista</h2>
 
         <h3>
-          <Form>
+          <Form onSubmit={this.onSubmit}>
             <Form.Group>
               <Form.Field inline>
                 <label>Kuinka monta reseptiä arvotaan ruokalistalle:</label>
-                <Input name='items' type='number' min='1' step='1' max={recipes.length}
+                <Input name='items' type='number' min='1' step='1' max={allRecipes.length}
                   onChange={this.handleChange} />
               </Form.Field>
-              <Button type='submit' onSubmit={this.onSubmit}>Arvo</Button>
+              <Form.Button>Arvo</Form.Button>
             </Form.Group>
           </Form>
         </h3>
 
+        {clear}
+
         <Table basic='very'>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell>Reseptejä yhteensä {recipes.length} kpl</Table.HeaderCell>
+              <Table.HeaderCell>Reseptejä yhteensä {recipes.length}/{allRecipes.length} kpl</Table.HeaderCell>
               <Table.HeaderCell>Painotus ruokalistalla</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
@@ -93,7 +134,7 @@ class RecipeMenu extends React.Component {
                   <Link to={`/recipes/${r.id}`}>{r.title}</Link>
                 </Table.Cell>
                 <Table.Cell>
-                  {this.emphasis(r)}
+                  <p color='black'>{r.content}</p>
                 </Table.Cell>
               </Table.Row>
             )}
@@ -114,5 +155,6 @@ const mapStateToProps = (state) => {
 }
 
 export default connect(
-  mapStateToProps
+  mapStateToProps,
+  { updateUser }
 )(RecipeMenu)
