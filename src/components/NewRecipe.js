@@ -66,6 +66,7 @@ class NewRecipe extends React.Component {
 
   handleTagChange = (event, data) => {
     const tags = data.value
+    console.log('t', tags)
     const newTag = String (tags[tags.length - 1])
     if (!this.props.tags.find(t => t.id === newTag)) {
       tags.pop()
