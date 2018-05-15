@@ -15,7 +15,7 @@ class Favorites extends React.Component {
     const value = event.target.value
 
     this.setState(() =>
-      ['all','liked', 'own'].reduce((obj, avain) =>
+      ['all', 'liked', 'own'].reduce((obj, avain) =>
         ({ ...obj, [avain]: avain === value })
         , {})
     )
@@ -72,6 +72,12 @@ class Favorites extends React.Component {
 
     const recipes = this.props.recipes.filter(r => recipeIds.indexOf(r.id) !== -1)
 
+    const sortAlphabetically = (a, b) => {
+      if (a.title < b.title) return -1
+      if (a.title > b.title) return 1
+      return 0
+    }
+
     if (!recipes) {
       return null
     }
@@ -89,16 +95,17 @@ class Favorites extends React.Component {
           </Table.Header>
 
           <Table.Body>
-            {recipes.map(r =>
-              <Table.Row key={r.id}>
-                <Table.Cell>
-                  <Link to={`/recipes/${r.id}`}>{r.title}</Link>
-                </Table.Cell>
-                <Table.Cell>
-                  {this.emphasis(r)}
-                </Table.Cell>
-              </Table.Row>
-            )}
+            {recipes.sort(sortAlphabetically)
+              .map(r =>
+                <Table.Row key={r.id}>
+                  <Table.Cell>
+                    <Link to={`/recipes/${r.id}`}>{r.title}</Link>
+                  </Table.Cell>
+                  <Table.Cell>
+                    {this.emphasis(r)}
+                  </Table.Cell>
+                </Table.Row>
+              )}
           </Table.Body>
         </Table>
       </div>

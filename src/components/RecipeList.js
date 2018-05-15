@@ -1,11 +1,33 @@
 import React from 'react'
-import { Icon, Input, Table } from 'semantic-ui-react'
+import { Form, Icon, Table } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
 
 class RecipeList extends React.Component {
 
   state = {
-    recipes: null
+    recipes: null,
+    search: '',
+    tags: []
+  }
+
+  populateOptions = (options) => {
+    return options.map(option => ({ key: option.id, text: option.name, value: option.id }))
+  }
+
+  handleTagChange = (event, data) => {
+    const tags = data.value
+    const newTag = String(tags[tags.length - 1])
+    if (!this.props.tags.find(t => t.id === newTag)) {
+      tags.pop()
+    }
+    this.setState({ tags })
+
+    let filteredRecipes = this.props.recipes
+    for (let i = 0, len = tags.length; i < len; i++) {
+      filteredRecipes = filteredRecipes.filter(r => r.tags.find(t => String(t._id) === String(tags[i])))
+    }
+    this.setState({ recipes: filteredRecipes })
   }
 
   likes = (recipe) => {
@@ -17,11 +39,16 @@ class RecipeList extends React.Component {
   }
 
   handleSearchChange = (e) => {
+    this.setState({ search: e.target.value })
     const searchString = e.target.value.toLowerCase()
     const filteredRecipes = this.props.recipes.filter(r => r.title.toLowerCase().search(searchString) !== -1)
     this.setState({
       recipes: filteredRecipes
     })
+  }
+
+  handleLeaving = (e) => {
+    this.setState({ search: '', tags: [] })
   }
 
   render() {
@@ -53,7 +80,7 @@ class RecipeList extends React.Component {
       if (like || user.id === recipe.user._id) {
         return <Icon name='heart' color='red' />
       } else {
-        return  <Icon name='empty heart' color='red' />
+        return <Icon name='empty heart' color='red' />
       }
     }
 
@@ -61,10 +88,28 @@ class RecipeList extends React.Component {
       <div>
         <h2>Reseptit</h2>
 
-        <Input icon='search' 
-          placeholder='Hae reseptin nimellä...'
-          onChange={this.handleSearchChange}  
-        />
+        <Form>
+          <Form.Group inline>
+          <Form.Input icon='search'
+            placeholder='Hae reseptin nimellä...'
+            value={this.state.search}
+            onChange={this.handleSearchChange}
+            onBlur={this.handleLeaving}
+          />
+          <Form.Dropdown inline
+            icon='search'
+            multiple
+            selection
+            options={this.populateOptions(this.props.tags)}
+            search
+            placeholder='Hae tageilla...'
+            name='tags'
+            value={this.state.tags}
+            onChange={this.handleTagChange}
+            onBlur={this.handleLeaving}
+          />
+          </Form.Group>
+        </Form>
 
         <Table basic='very'>
           <Table.Body>
@@ -85,4 +130,18 @@ class RecipeList extends React.Component {
   }
 }
 
-export default RecipeList
+const sortAlphabetically = (a, b) => {
+  if (a.name < b.name) return -1
+  if (a.name > b.name) return 1
+  return 0
+}
+
+const mapStateToProps = (state) => {
+  return {
+    tags: state.tags.sort(sortAlphabetically)
+  }
+}
+
+export default connect(
+  mapStateToProps
+)(RecipeList)
