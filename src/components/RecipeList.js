@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 class RecipeList extends React.Component {
 
   state = {
-    recipes: this.props.recipes
+    recipes: null
   }
 
   likes = (recipe) => {
@@ -18,7 +18,6 @@ class RecipeList extends React.Component {
 
   handleSearchChange = (e) => {
     const searchString = e.target.value.toLowerCase()
-    console.log('ss', searchString)
     const filteredRecipes = this.props.recipes.filter(r => r.title.toLowerCase().search(searchString) !== -1)
     this.setState({
       recipes: filteredRecipes
@@ -38,9 +37,12 @@ class RecipeList extends React.Component {
       return 0
     }
 
-    console.log('r', this.state.recipes)
-    const recipes = this.state.recipes.sort(sortByLikes)
-
+    let recipes = null
+    if (!this.state.recipes) {
+      recipes = this.props.recipes.sort(sortByLikes)
+    } else {
+      recipes = this.state.recipes.sort(sortByLikes)
+    }
 
     const user = this.props.user
     const heartStyle = (recipe) => {
