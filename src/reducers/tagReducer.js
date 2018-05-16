@@ -28,6 +28,7 @@ export const newTag = (tagObject) => {
       type: 'NEW_TAG',
       data: newTag
     })
+    return newTag
   }
 }
 

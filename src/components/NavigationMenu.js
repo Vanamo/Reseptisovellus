@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom'
 
 class NavigationMenu extends React.Component {
 
-  state = {}
+  state = {
+    activeItem: this.props.location.pathname
+  }
 
   handleClick = (e, { name }) => {
     this.setState({ activeItem: name })
@@ -22,11 +24,11 @@ class NavigationMenu extends React.Component {
     if (user.id === null) {
       return (
         <Menu stackable inverted>
-          <Menu.Item as={Link} to='/' name='home' active={activeItem === 'home'} onClick={this.handleClick}>
+          <Menu.Item as={Link} to='/' name='/' active={activeItem === '/'} onClick={this.handleClick}>
             Reseptit
           </Menu.Item>
           <Menu.Menu position='right'>
-            <Menu.Item as={Link} to='/login' name='login' active={activeItem === 'login'} onClick={this.handleClick}>
+            <Menu.Item as={Link} to='/login' name='/login' active={activeItem === '/login'} onClick={this.handleClick}>
               Kirjaudu
             </Menu.Item>
           </Menu.Menu>
@@ -36,16 +38,16 @@ class NavigationMenu extends React.Component {
 
     return (
       <Menu stackable inverted>
-        <Menu.Item as={Link} to='/' name='home' active={activeItem === 'home'} onClick={this.handleClick}>
+        <Menu.Item as={Link} to='/' name='/' active={activeItem === '/'} onClick={this.handleClick}>
           Reseptit
         </Menu.Item>
-        <Menu.Item as={Link} to='/newRecipe' name='add' active={activeItem === 'add'} onClick={this.handleClick}>
+        <Menu.Item as={Link} to='/newRecipe' name='/newRecipe' active={activeItem === '/newRecipe'} onClick={this.handleClick}>
           Lisää resepti
         </Menu.Item>
-        <Menu.Item as={Link} to='/favorites' name='favorites' active={activeItem === 'favorites'} onClick={this.handleClick}>
+        <Menu.Item as={Link} to='/favorites' name='/favorites' active={activeItem === '/favorites'} onClick={this.handleClick}>
           Suosikit
         </Menu.Item>
-        <Menu.Item as={Link} to='/menu' name='menu' active={activeItem === 'menu'} onClick={this.handleClick}>
+        <Menu.Item as={Link} to='/menu' name='/menu' active={activeItem === '/menu'} onClick={this.handleClick}>
           Ruokalista
         </Menu.Item>
 

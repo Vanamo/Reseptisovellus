@@ -10,7 +10,7 @@ import Notification from './components/Notification'
 import { setUser, loginUser, logoutUser } from './reducers/userReducer'
 import { Container } from 'semantic-ui-react'
 import NavigationMenu from './components/NavigationMenu'
-import { HashRouter as Router, Route } from 'react-router-dom'
+import { HashRouter as Router, Route, withRouter } from 'react-router-dom'
 import RecipeList from './components/RecipeList'
 import NewRecipe from './components/NewRecipe'
 import { initIngredientUnits } from './reducers/ingredientUnitReducer'
@@ -55,7 +55,6 @@ class App extends React.Component {
   render() {
 
     const recipeById = (id) => {
-      console.log('recipes', this.props.recipes)
       const recipe = this.props.recipes.find(r => r.id === String(id))
       return recipe
     }
@@ -83,14 +82,21 @@ class App extends React.Component {
       return emphasis
     }
 
+    const MenuComponent = withRouter(props =>
+      <NavigationMenu {...props}
+        user={this.props.user}
+        handleLogout={this.handleLogout}
+      />)
+
     return (
       <Container>
         <Router>
           <div>
-            <NavigationMenu
+            <MenuComponent/>
+            {/* <NavigationMenu
               user={this.props.user}
               handleLogout={this.handleLogout}
-            />
+            /> */}
             <Notification />
 
             <Route exact path='/' render={() =>

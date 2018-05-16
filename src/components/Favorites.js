@@ -39,6 +39,9 @@ class Favorites extends React.Component {
       return null
     }
     const user = this.props.allUsers.find(au => au.id === this.props.user.id)
+    if (!user) {
+      window.location.reload()
+    }
 
     let buttonLiked = <Button onClick={this.handleClick} value={'liked'}>Tykätyt</Button>
     let buttonAll = <Button onClick={this.handleClick} value={'all'}>Kaikki</Button>
@@ -61,6 +64,7 @@ class Favorites extends React.Component {
       </Button.Group>
     )
 
+    console.log('u', user)
     let recipeIds = null
     if (this.state.all) {
       recipeIds = user.recipes.concat(user.likedRecipes)

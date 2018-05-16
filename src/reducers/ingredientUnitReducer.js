@@ -28,6 +28,7 @@ export const newIngredientUnit = (ingredientUnitObject) => {
       type: 'NEW_INGREDIENTUNIT',
       data: newIngredientUnit
     })
+    return newIngredientUnit
   }
 }
 

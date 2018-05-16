@@ -31,7 +31,6 @@ export const newRecipeEmphasis = (emphasisObject) => {
 export const initRecipeEmphases = () => {
   return async (dispatch) => {
     const recipeEmphases = await recipeEmphasesService.getAll()
-    console.log('re', recipeEmphases)
     dispatch({
       type: 'INIT_RECIPEEMPHASES',
       data: recipeEmphases

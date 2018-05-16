@@ -78,31 +78,49 @@ class EditRecipe extends React.Component {
     this.setState({ tags })
   }
 
-  handleUnitAddition = (e, { value }) => {
+  handleUnitAddition = (idx) => async (e, { value }) => {
     const newUnit = {
       name: value
     }
+    let unit = null
     if (window.confirm(`Haluatko varmasti lisätä uuden yksikön '${value}'?`)) {
-      this.props.newIngredientUnit(newUnit)
+      unit = await this.props.newIngredientUnit(newUnit)
     }
+
+    const newIngredients = this.state.ingredients.map((ingredient, ind) => {
+      if (ind !== idx) return ingredient
+      return { ...ingredient, unit: unit.id }
+    })
+    this.setState({ ingredients: newIngredients })
   }
 
-  handleIngredientNameAddition = (e, { value }) => {
+  handleIngredientNameAddition = (idx) => async (e, { value }) => {
     const newName = {
       name: value
     }
+    let name = null
     if (window.confirm(`Haluatko varmasti lisätä uuden raaka-aineen '${value}'?`)) {
-      this.props.newIngredientName(newName)
+      name = await this.props.newIngredientName(newName)
     }
+
+    const newIngredients = this.state.ingredients.map((ingredient, ind) => {
+      if (ind !== idx) return ingredient
+      return { ...ingredient, name: name.id }
+    })
+    this.setState({ ingredients: newIngredients })
   }
 
-  handleTagAddition = (e, { value }) => {
+  handleTagAddition = async (e, { value }) => {
     const newTag = {
       name: value
     }
+    let tag = null
     if (window.confirm(`Haluatko varmasti lisätä uuden tagin '${value}'?`)) {
-      this.props.newTag(newTag)
+      tag = await this.props.newTag(newTag)
     }
+
+    const tags = this.state.tags.concat(tag.id)
+    this.setState({ tags })
   }
 
   onSubmit = async (event) => {
@@ -176,7 +194,6 @@ class EditRecipe extends React.Component {
           <strong>Ainekset</strong>
           <p></p>
           {this.state.ingredients.map((ingredient, idx) => {
-            console.log('i', ingredient)
             if (ingredient.type === 'title') {
               return (
                 <Form.Group widths='equal' key={idx}>
@@ -213,7 +230,7 @@ class EditRecipe extends React.Component {
                   allowAdditions
                   value={ingredient.unit}
                   onChange={this.handleIngredientChange(idx)}
-                  onAddItem={this.handleUnitAddition}
+                  onAddItem={this.handleUnitAddition(idx)}
                 />
                 <Form.Select fluid
                   name='name'
@@ -223,7 +240,7 @@ class EditRecipe extends React.Component {
                   placeholder='raaka-aine'
                   value={ingredient.name}
                   onChange={this.handleIngredientChange(idx)}
-                  onAddItem={this.handleIngredientNameAddition}
+                  onAddItem={this.handleIngredientNameAddition(idx)}
                 />
                 <Button
                   negative

@@ -11,7 +11,6 @@ class Login extends React.Component {
   }
 
   componentWillReceiveProps = (nextProps) => {
-    console.log('np', nextProps)
     if (nextProps.user) {
       this.props.history.push('/')
     }
@@ -66,7 +65,6 @@ class Login extends React.Component {
 
 
 const mapStateToProps = (state) => {
-  console.log('state', state)
   return {
     user: state.user,
   }

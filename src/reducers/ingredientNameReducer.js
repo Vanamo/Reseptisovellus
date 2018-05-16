@@ -28,6 +28,7 @@ export const newIngredientName = (ingredientNameObject) => {
       type: 'NEW_INGREDIENTNAME',
       data: newIngredientName
     })
+    return newIngredientName
   }
 }
 
