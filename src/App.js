@@ -82,6 +82,14 @@ class App extends React.Component {
       return emphasis
     }
 
+    const userWithInfo = () => {
+      if (!this.props.allUsers.length || !this.props.user.id) {
+        return null
+      }
+      const user = this.props.allUsers.find(au => au.id === this.props.user.id)
+      return user
+    }
+
     const MenuComponent = withRouter(props =>
       <NavigationMenu {...props}
         user={this.props.user}
@@ -93,10 +101,7 @@ class App extends React.Component {
         <Router>
           <div>
             <MenuComponent/>
-            {/* <NavigationMenu
-              user={this.props.user}
-              handleLogout={this.handleLogout}
-            /> */}
+
             <Notification />
 
             <Route exact path='/' render={() =>
@@ -123,7 +128,7 @@ class App extends React.Component {
             } />
             <Route exact path='/favorites' render={() =>
               <Favorites
-                user={this.props.user}
+                user={userWithInfo()}
               />
             } />
             <Route exact path='/menu' render={() =>

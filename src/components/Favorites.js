@@ -32,16 +32,11 @@ class Favorites extends React.Component {
   }
 
   render() {
-    if (!this.props.user.id || !this.props.emphases) {
+    if (!this.props.user || !this.props.emphases) {
       return null
     }
-    if (!this.props.allUsers.length) {
-      return null
-    }
-    const user = this.props.allUsers.find(au => au.id === this.props.user.id)
-    if (!user) {
-      window.location.reload()
-    }
+
+    const user = this.props.user
 
     let buttonLiked = <Button onClick={this.handleClick} value={'liked'}>Tykätyt</Button>
     let buttonAll = <Button onClick={this.handleClick} value={'all'}>Kaikki</Button>
@@ -64,7 +59,6 @@ class Favorites extends React.Component {
       </Button.Group>
     )
 
-    console.log('u', user)
     let recipeIds = null
     if (this.state.all) {
       recipeIds = user.recipes.concat(user.likedRecipes)

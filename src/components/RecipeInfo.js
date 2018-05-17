@@ -57,13 +57,14 @@ class RecipeInfo extends React.Component {
   render() {
     const recipe = this.props.recipe
     const note = this.props.note
-    let user = this.props.user
-    if (this.props.user.id) {
-      user = this.props.allUsers.find(au => au.id === this.props.user.id)
-    }
 
     if (!recipe || !this.props.allUsers.length) {
       return null
+    }
+
+    let user = this.props.user
+    if (this.props.user.id) {
+      user = this.props.allUsers.find(au => au.id === this.props.user.id)
     }
 
     let userRecipes = null
