@@ -6,6 +6,8 @@ const reducer = (state = [], action) => {
     return action.data
   case 'NEW_INGREDIENT':
     return [...state, action.data]
+  case 'DELETE_INGREDIENT':
+    return state.filter(i => i.id !== action.data.id)
   }
   return state
 }
@@ -29,6 +31,17 @@ export const newIngredient = (ingredientObject) => {
       data: newIngredient
     })
     return newIngredient
+  }
+}
+
+export const deleteIngredient = (ingredient) => {
+  return async (dispatch) => {
+    const id = ingredient.id
+    await ingredientService.deleteIngredient(id)
+    dispatch({
+      type: 'DELETE_INGREDIENT',
+      data: { id }
+    })
   }
 }
 

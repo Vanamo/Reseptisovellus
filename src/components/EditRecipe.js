@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { updateRecipe } from './../reducers/recipeReducer'
-import { newIngredient } from './../reducers/ingredientReducer'
+import { newIngredient, deleteIngredient } from './../reducers/ingredientReducer'
 import { newErrorNotification } from './../reducers/notificationReducer'
 import { newIngredientUnit } from './../reducers/ingredientUnitReducer'
 import { newIngredientName } from './../reducers/ingredientNameReducer'
@@ -135,6 +135,10 @@ class EditRecipe extends React.Component {
     } else if (this.state.title.length < 3) {
       this.props.newErrorNotification('Reseptin nimen täytyy sisältää vähintään kolme merkkiä', 5)
     } else {
+
+      await Promise.all(this.props.recipe.ingredients.map(async (ing) => {
+        this.props.deleteIngredient(ing)
+      }))
 
       const ingredients = await Promise.all(this.state.ingredients.map(async (ing) => {
         const ingredientObject = {
@@ -308,7 +312,7 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  { updateRecipe, newIngredient,
+  { updateRecipe, newIngredient, deleteIngredient,
     newErrorNotification, newIngredientUnit,
     newIngredientName, newTag }
 )(EditRecipe)
